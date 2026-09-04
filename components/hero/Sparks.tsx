@@ -89,11 +89,16 @@ export function Sparks({ nozzleRef }: SparksProps) {
     }
   });
 
-  return (
+return (
     <points ref={pointsRef}>
       <bufferGeometry>
-        <bufferAttribute attach="attributes-position" count={particleCount} array={positions} itemSize={3} />
+        {/* PERBAIKAN DI SINI: Gunakan 'args' untuk memasukkan positions dan angka 3 */}
+        <bufferAttribute 
+          attach="attributes-position" 
+          args={[positions, 3]} 
+        />
       </bufferGeometry>
+      
       <pointsMaterial
         ref={materialRef}
         map={sparkTexture}
@@ -101,7 +106,7 @@ export function Sparks({ nozzleRef }: SparksProps) {
         transparent
         blending={THREE.AdditiveBlending}
         depthWrite={false}
-        opacity={0} // Default mati saat pertama dimuat
+        opacity={0} 
       />
     </points>
   );
