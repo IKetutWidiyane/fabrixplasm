@@ -71,8 +71,9 @@ function SceneContent({ scrollProxyRef }: { scrollProxyRef: React.RefObject<HTML
       
       <pointLight ref={lightRef} color="#FF6A00" intensity={0} distance={10} />
 
-      <SteelPlate />
-      <FPMark />
+      <SteelPlate>
+        <FPMark />
+      </SteelPlate>
       <PlasmaNozzle ref={nozzleRef}>
         {/* Kita tidak lagi pakai {isCutting && ...}, tapi berikan reference nozzle ke dalamnya */}
         <PlasmaArc nozzleRef={nozzleRef} />
