@@ -4,7 +4,6 @@ import * as THREE from "three";
 import { useTexture } from "@react-three/drei";
 
 export const SteelPlate = forwardRef<THREE.Group>((_, ref) => {
-  // Load tekstur dari folder public/textures/hero/
   const textureProps = useTexture({
     map: "/textures/hero/Metal061A_1K-PNG_Color.png",
     normalMap: "/textures/hero/Metal061A_1K-PNG_NormalGL.png",
@@ -13,15 +12,13 @@ export const SteelPlate = forwardRef<THREE.Group>((_, ref) => {
   });
 
   return (
-    <group ref={ref} position={[0, -1, 0]}>
-      <mesh>
-        {/* Plat besi */}
+    <group ref={ref} position={[0, -0.4, 0]}>
+      {/* Tambahkan receiveShadow disini */}
+      <mesh receiveShadow>
         <boxGeometry args={[20, 0.4, 15]} />
-        
-        {/* Sebarkan (spread) properti tekstur ke material */}
         <meshStandardMaterial 
           {...textureProps} 
-          envMapIntensity={1} // Memperkuat pantulan cahaya pada area metalik
+          envMapIntensity={1.5} // Memperkuat refleksi dari Environment warehouse
         />
       </mesh>
     </group>
