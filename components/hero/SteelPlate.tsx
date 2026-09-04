@@ -5,7 +5,7 @@ import { useTexture } from "@react-three/drei";
 
 export const SteelPlate = forwardRef<THREE.Group>((_, ref) => {
   const textureProps = useTexture({
-    map: "/textures/hero/color.png",
+    map: "/textures/hero/colory.png",
     normalMap: "/textures/hero/normal.png",
     roughnessMap: "/textures/hero/roughness.png",
     metalnessMap: "/textures/hero/metalness.png",
