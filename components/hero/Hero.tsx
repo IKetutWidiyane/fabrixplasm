@@ -18,10 +18,10 @@ export default function Hero() {
   return (
     <>
       {/* 3D Canvas di bawah UI */}
-      <HeroScene scrollProxyRef={scrollProxyRef} />
+      <HeroScene />
 
       {/* UI Tetap (Fixed Overlay) */}
-      <div className="fixed inset-0 z-10 p-6 md:p-10 pointer-events-none flex flex-col justify-between mix-blend-difference">
+      <div className="fixed inset-0 z-10 p-6 md:p-10 pointer-events-none flex flex-col justify-between">
         <Navbar />
 
         {/* Teks Utama */}
