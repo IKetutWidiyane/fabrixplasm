@@ -217,14 +217,14 @@ export function getKerfSegments(): KerfSegment[] {
   return segments;
 }
 
-export function sampleCutPath(time: number): CutSample {
-  const wrapped = ((time % DURATION) + DURATION) % DURATION;
+function sampleAtTime(time: number): CutSample {
+  const t = THREE.MathUtils.clamp(time, 0, DURATION);
   let i = 1;
-  while (i < KEYS.length && KEYS[i].at < wrapped) i++;
+  while (i < KEYS.length && KEYS[i].at < t) i++;
   const b = KEYS[Math.min(i, KEYS.length - 1)];
   const a = KEYS[Math.max(i - 1, 0)];
   const span = Math.max(b.at - a.at, 0.0001);
-  const u = easeValue((wrapped - a.at) / span, b.ease);
+  const u = easeValue((t - a.at) / span, b.ease);
 
   const x = a.x + (b.x - a.x) * u;
   const y = a.y + (b.y - a.y) * u;
@@ -260,4 +260,15 @@ export function sampleCutPath(time: number): CutSample {
     totalCutLength: TOTAL_CUT_LENGTH,
     progress: TOTAL_CUT_LENGTH > 0 ? cutDistance / TOTAL_CUT_LENGTH : 0,
   };
+}
+
+/** Loop-friendly sampler (mempertahankan perilaku loop lama). */
+export function sampleCutPath(time: number): CutSample {
+  const wrapped = ((time % DURATION) + DURATION) % DURATION;
+  return sampleAtTime(wrapped);
+}
+
+/** Scroll-driven sampler (tanpa wrap): progress 0→1 = satu siklus pemotongan. */
+export function sampleCutProgress(progress: number): CutSample {
+  return sampleAtTime(THREE.MathUtils.clamp(progress, 0, 1) * DURATION);
 }

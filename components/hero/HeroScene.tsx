@@ -4,6 +4,8 @@ import { useRef, Suspense, useEffect, useMemo } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Environment } from "@react-three/drei";
 import * as THREE from "three";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SteelPlate } from "./SteelPlate";
 import { PlasmaNozzle } from "./PlasmaNozzle";
 import { PlasmaArc } from "./PlasmaArc";
@@ -11,21 +13,39 @@ import { Sparks } from "./Sparks";
 import { FPMark } from "./FPMark";
 import { KerfTrail } from "./KerfTrail";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
-import { sampleCutPath, type CutSample } from "@/lib/fpCutPath";
+import { sampleCutProgress, type CutSample } from "@/lib/fpCutPath";
 
-function SceneContent() {
+gsap.registerPlugin(ScrollTrigger);
+
+function SceneContent({ scrollProxyRef }: { scrollProxyRef: React.RefObject<HTMLDivElement | null> }) {
   const nozzleRef = useRef<THREE.Group>(null);
   const lightRef = useRef<THREE.PointLight>(null);
   const cutDistanceRef = useRef(0);
   const cuttingRef = useRef(false);
   const tangentRef = useRef(new THREE.Vector2(0, 1));
-  const smoothed = useRef(new THREE.Vector3(0, 1.75, 0));
+  const smoothed = useRef(new THREE.Vector3(0, 1.05, 0));
   const lookTarget = useRef(new THREE.Vector3(0, 0, 0));
   const desiredLook = useRef(new THREE.Vector3(0, 0, 0));
   const mouse = useRef({ x: 0, y: 0 });
+  const progressRef = useRef(0);
+  const targetProgressRef = useRef(0);
   const clock = useRef(0);
   const prefersReducedMotion = useReducedMotion();
-  const initialSample = useMemo(() => sampleCutPath(0), []);
+  const initialSample = useMemo(() => sampleCutProgress(0), []);
+
+  // Progres scene dikendalikan scroll (0 → 1) via ScrollTrigger pada spacer hero.
+  useEffect(() => {
+    if (!scrollProxyRef.current) return;
+    const st = ScrollTrigger.create({
+      trigger: scrollProxyRef.current,
+      start: "top top",
+      end: "bottom bottom",
+      onUpdate: (self) => {
+        targetProgressRef.current = self.progress;
+      },
+    });
+    return () => st.kill();
+  }, [scrollProxyRef]);
 
   useEffect(() => {
     const onMove = (e: MouseEvent) => {
@@ -44,17 +64,22 @@ function SceneContent() {
 
   useFrame(({ camera }, delta) => {
     const dt = Math.min(delta, 0.05);
-    if (!prefersReducedMotion) clock.current += dt;
+    clock.current += dt;
 
+    // Smoothing progres scroll agar gerakan nozzle terasa berat / mekanik.
+    const target = prefersReducedMotion ? 1 : targetProgressRef.current;
+    progressRef.current += (target - progressRef.current) * (1 - Math.exp(-6 * dt));
+
+    // Single-pass (tanpa loop): progress 0 = parkir, 1 = selesai & statis.
     const sample: CutSample = prefersReducedMotion
-      ? { ...initialSample, cutting: false, progress: 1, cutDistance: initialSample.totalCutLength }
-      : sampleCutPath(clock.current);
+      ? sampleCutProgress(1)
+      : sampleCutProgress(progressRef.current);
 
-    cutDistanceRef.current = prefersReducedMotion ? sample.totalCutLength : sample.cutDistance;
+    cutDistanceRef.current = sample.cutDistance;
     cuttingRef.current = sample.cutting;
     tangentRef.current.set(sample.tangentX, sample.tangentZ);
 
-    const follow = prefersReducedMotion ? 1 : 1 - Math.exp(-14 * dt);
+    const follow = 1 - Math.exp(-14 * dt);
     smoothed.current.x += (sample.x - smoothed.current.x) * follow;
     smoothed.current.y += (sample.y - smoothed.current.y) * follow;
     smoothed.current.z += (sample.z - smoothed.current.z) * follow;
@@ -70,14 +95,19 @@ function SceneContent() {
       lightRef.current.intensity += (targetIntensity - lightRef.current.intensity) * lightFollow;
     }
 
-    const camX = mouse.current.x * 0.35 + 3.35;
-    const camY = mouse.current.y * 0.28 + 3.85;
-    const camZ = 4.35;
+    const focus = Math.min(sample.progress, 1);
+    const camX = mouse.current.x * 0.3 + 3.35 - focus * 0.35;
+    const camY = mouse.current.y * 0.25 + 3.85 - focus * 0.15;
+    const camZ = 4.35 - focus * 0.25;
     camera.position.x += (camX - camera.position.x) * (1 - Math.exp(-3 * dt));
     camera.position.y += (camY - camera.position.y) * (1 - Math.exp(-3 * dt));
     camera.position.z += (camZ - camera.position.z) * (1 - Math.exp(-3 * dt));
 
-    desiredLook.current.set(smoothed.current.x * 0.12, 0, smoothed.current.z * 0.12);
+    desiredLook.current.set(
+      smoothed.current.x * (0.12 + focus * 0.12),
+      0,
+      smoothed.current.z * (0.12 + focus * 0.12),
+    );
     lookTarget.current.lerp(desiredLook.current, 1 - Math.exp(-2.4 * dt));
     camera.lookAt(lookTarget.current);
   });
@@ -113,7 +143,7 @@ function SceneContent() {
   );
 }
 
-export default function HeroScene() {
+export default function HeroScene({ scrollProxyRef }: { scrollProxyRef: React.RefObject<HTMLDivElement | null> }) {
   return (
     <div className="fixed inset-0 z-0 pointer-events-none bg-[#0B0B0A]">
       <Canvas
@@ -122,7 +152,7 @@ export default function HeroScene() {
         gl={{ antialias: true, toneMapping: THREE.ACESFilmicToneMapping }}
       >
         <Suspense fallback={null}>
-          <SceneContent />
+          <SceneContent scrollProxyRef={scrollProxyRef} />
         </Suspense>
       </Canvas>
     </div>
