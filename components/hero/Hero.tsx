@@ -1,4 +1,5 @@
 "use client";
+
 import { useEffect, useRef } from "react";
 import Navbar from "@/components/navigation/Navbar";
 import HeroScene from "./HeroScene";
@@ -59,29 +60,12 @@ export default function Hero() {
             </MagneticButton>
           </div>
         </div>
-
-        {/* End-state: muncul setelah fabrikasi selesai */}
-        <div className="hero-end-fade absolute bottom-28 md:bottom-32 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 text-center opacity-0 pointer-events-none">
-          <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#FF6A00]">
-            FABRICATION COMPLETE
-          </span>
-          <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#8D8A82]">
-            SCROLL TO CONTINUE ↓
-          </span>
-        </div>
       </div>
 
-      {/* Area Spacer untuk memicu ScrollTrigger GSAP */}
+      {/* Area Spacer untuk memicu ScrollTrigger GSAP Hero.
+          Ini adalah satu-satunya elemen dari Hero yang memakan ruang di DOM standard.
+          Ketika scroll melewati 350vh, halaman akan langsung berlanjut ke CNCSection. */}
       <div ref={scrollProxyRef} className="relative z-20 h-[350vh] pointer-events-none" />
-
-      {/* Teaser section berikutnya (setelah hero selesai) */}
-      <section className="relative z-30 min-h-screen flex flex-col items-center justify-center gap-4 bg-[#0B0B0A] font-mono text-[10px] uppercase tracking-[0.2em] text-[#8D8A82]">
-        <span className="text-[#FF6A00]">02 — NEXT PROCESS</span>
-        <span className="text-2xl md:text-3xl text-[#E8E5DE] normal-case tracking-normal">
-          CNC MACHINING
-        </span>
-        <span className="mt-2 text-[#FF6A00] text-lg">↓</span>
-      </section>
     </>
   );
 }
