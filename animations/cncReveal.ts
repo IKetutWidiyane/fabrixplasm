@@ -33,13 +33,15 @@ export const revealImageCut = (target: Element, triggerElement: Element) => {
     {
       clipPath: "inset(0% 0% 0% 0%)",
       scale: 1,
-      ease: "power3.inOut",
+      ease: "none", // "none" adalah ease terbaik jika menggunakan scrub
       scrollTrigger: {
         trigger: triggerElement,
-        // UBAH BARIS INI: Dari "top 80%" menjadi "top 95%"
+        // UBAH START: Mulai animasi saat gambar menyentuh 95% layar (hampir ujung bawah), sehingga tidak telat.
         start: "top 95%", 
-        end: "top 30%", // Gambar akan selesai terbuka full saat posisinya di 30% layar
-        scrub: 1, 
+        // UBAH END: Animasi selesai terbuka penuh saat gambar berada di tengah layar.
+        end: "center center", 
+        // UBAH SCRUB: Turunkan dari 1 menjadi 0.2 agar animasinya lebih cepat dan responsif mengikuti kecepatan scroll jarimu.
+        scrub: 0.2, 
       },
     }
   );
