@@ -1,9 +1,14 @@
 "use client";
 
-import { useState } from "react";
-import { useRef } from "react";
+import { useState, useRef } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+// Pastikan ScrollTrigger diregistrasi agar tidak error di Next.js
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
 const materials = [
   { name: "ALUMINUM", props: "Lightweight, Machinable, Corrosion resistant" },
@@ -14,18 +19,19 @@ const materials = [
 ];
 
 export default function CNCMaterials() {
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useGSAP(() => {
     gsap.fromTo(
       ".material-label",
-      { opacity: 0, y: 20 },
+      { opacity: 0, y: 25 },
       {
         opacity: 1,
         y: 0,
         stagger: 0.1,
-        duration: 0.6,
+        duration: 0.7,
+        ease: "power2.out",
         scrollTrigger: {
           trigger: containerRef.current,
           start: "top 85%",
@@ -35,33 +41,44 @@ export default function CNCMaterials() {
   }, { scope: containerRef });
 
   return (
-    <div ref={containerRef} className="relative">
-      <div className="font-mono text-zinc-500 text-sm mb-12">MATERIALS</div>
+    <div ref={containerRef} className="relative w-full py-8">
+      <div className="font-mono text-zinc-500 text-sm mb-8 md:mb-12">MATERIALS</div>
       
-      <div className="flex flex-col md:flex-row gap-x-12 gap-y-6 flex-wrap">
+      <div className="flex flex-col md:flex-row gap-6 md:gap-x-12 md:gap-y-10 flex-wrap">
         {materials.map((mat, idx) => (
           <div 
             key={mat.name}
             className="material-label group relative cursor-pointer"
-            onMouseEnter={() => setHoveredIndex(idx)}
-            onMouseLeave={() => setHoveredIndex(null)}
+            onMouseEnter={() => setActiveIndex(idx)}
+            onMouseLeave={() => setActiveIndex(null)}
+            // Tambahkan onClick untuk dukungan layar sentuh (HP)
+            onClick={() => setActiveIndex(activeIndex === idx ? null : idx)}
           >
-            <h4 className={`text-2xl md:text-3xl font-bold tracking-tighter transition-colors duration-300 ${
-              hoveredIndex === null 
+            <h4 className={`text-3xl sm:text-4xl md:text-3xl lg:text-4xl font-bold tracking-tighter transition-colors duration-300 ${
+              activeIndex === null 
                 ? "text-zinc-300" 
-                : hoveredIndex === idx 
+                : activeIndex === idx 
                   ? "text-white" 
-                  : "text-zinc-800"
+                  : "text-zinc-700 md:text-zinc-800"
             }`}>
               {mat.name}
             </h4>
             
-            {/* Tooltip Hover Info */}
-            <div className={`absolute top-full left-0 mt-4 w-48 transition-all duration-300 ${
-              hoveredIndex === idx ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-2 pointer-events-none"
-            }`}>
-              <div className="h-px w-full bg-zinc-600 mb-2"></div>
-              <p className="text-xs text-zinc-400 leading-relaxed font-mono">
+            {/* 
+              Di Mobile: Menjadi "Accordion" yang mendorong konten di bawahnya ke bawah (menggunakan max-h).
+              Di Desktop (md+): Menjadi Tooltip "Absolute" yang melayang tanpa mengubah layout. 
+            */}
+            <div className={`
+              overflow-hidden md:overflow-visible transition-all duration-300 ease-in-out
+              md:absolute md:top-full md:left-0 md:mt-4 md:w-56
+              ${
+                activeIndex === idx 
+                  ? "max-h-24 opacity-100 mt-2 md:mt-0 md:translate-y-0" 
+                  : "max-h-0 opacity-0 md:-translate-y-2 pointer-events-none"
+              }
+            `}>
+              <div className="h-px w-12 md:w-full bg-zinc-600 mb-2 mt-1 md:mt-0"></div>
+              <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed font-mono">
                 {mat.props}
               </p>
             </div>
