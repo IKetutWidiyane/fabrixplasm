@@ -6,6 +6,7 @@ import { useGSAP } from "@gsap/react";
 import LoadingProgress from "./LoadingProgress";
 import { PRELOADER_READY_EVENT } from "./events";
 import { PreloaderState } from "@/hooks/useAssetPreloader";
+import { preloadIdleAssets } from "@/lib/assetLoader";
 
 interface PreloaderProps {
   state: PreloaderState;
@@ -29,10 +30,12 @@ export default function Preloader({ state }: PreloaderProps) {
     };
   }, []);
 
-  // Une fois prêt : déverrouille + prévient le reste de l'app (Hero mount, Lenis…).
+  // Une fois prêt : déverrouille + prévient le reste de l'app (Hero mount, Lenis…)
+  // et lance en arrière-plan le préchargement des sections suivantes (CNC, Process).
   useEffect(() => {
     if (!done) return;
     document.body.style.overflow = "";
+    preloadIdleAssets();
     window.dispatchEvent(new CustomEvent(PRELOADER_READY_EVENT));
   }, [done]);
 

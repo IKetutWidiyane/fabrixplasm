@@ -148,7 +148,7 @@ export async function loadCriticalAssets(
 export function preloadIdleAssets(): void {
   for (const url of IDLE_ASSETS) {
     const img = new Image();
-    img.decodingHint = "async";
+    img.decoding = "async";
     img.src = url;
   }
 }
