@@ -8,6 +8,8 @@
  * des sections suivantes (CNC, Process) afin qu'elles apparaissent instantanément.
  */
 
+import { processData } from "@/data/processData";
+
 // -- Assets critiques : tout ce que le Hero 3D consomme réellement --
 export const CRITICAL_ASSETS: readonly string[] = [
   "/models/hero/nozzle.glb",
@@ -21,11 +23,8 @@ export const CRITICAL_ASSETS: readonly string[] = [
 // -- Assets non-critiques, préchargés en arrière-plan après le Hero --
 export const IDLE_ASSETS: readonly string[] = [
   "/images/cnc/cnc-machine.webp",
-  // Process (Unsplash, data/processData.ts)
-  "https://images.unsplash.com/photo-1618424181497-157f25b6ce50?q=80&w=2000&auto=format&fit=crop",
-  "https://images.unsplash.com/photo-1535813547-99c456a41d4a?q=80&w=2000&auto=format&fit=crop",
-  "https://images.unsplash.com/photo-1565439390234-58cb30cce4b4?q=80&w=2000&auto=format&fit=crop",
-  "https://images.unsplash.com/photo-1505098935706-93da5394beee?q=80&w=2000&auto=format&fit=crop",
+  // Process — source unique de vérité dans data/processData.ts
+  ...processData.map((step) => step.image),
 ];
 
 // Les fonts Geist pèsent peu : petit poids dans le calcul global de progression.

@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import Lenis from "lenis";
 import gsap from "gsap";
 import ScrollTrigger from "gsap/ScrollTrigger";
+import { PRELOADER_READY_EVENT } from "@/components/loader/events";
 
 export function useLenis() {
   useEffect(() => {
@@ -18,13 +19,21 @@ export function useLenis() {
       lenis.raf(time * 1000);
     };
 
+    // Une fois le preloader terminé, le Hero est monté et la page a changé de
+    // hauteur : on recalcule les positions ScrollTrigger pour un scroll propre.
+    const onPreloaderReady = () => {
+      ScrollTrigger.refresh();
+    };
+
     lenis.on("scroll", onScroll);
     gsap.ticker.add(onTicker);
     gsap.ticker.lagSmoothing(0);
+    window.addEventListener(PRELOADER_READY_EVENT, onPreloaderReady);
 
     return () => {
       gsap.ticker.remove(onTicker);
       lenis.destroy();
+      window.removeEventListener(PRELOADER_READY_EVENT, onPreloaderReady);
     };
   }, []);
 }

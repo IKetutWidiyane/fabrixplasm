@@ -11,8 +11,8 @@ interface SteelPlateProps {
 export const SteelPlate = forwardRef<THREE.Group, SteelPlateProps>(
   ({ children }, ref) => {
     const textureProps = useTexture({
-      map: "/textures/hero/color.png",
-      normalMap: "/textures/hero/normal.png",
+      map: "/textures/hero/color.webp",
+      normalMap: "/textures/hero/normal.webp",
       roughnessMap: "/textures/hero/roughness.png",
       metalnessMap: "/textures/hero/metalness.png",
     });

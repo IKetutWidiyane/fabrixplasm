@@ -114,7 +114,8 @@ function SceneContent({ scrollProxyRef }: { scrollProxyRef: React.RefObject<HTML
 
   return (
     <>
-      <Environment preset="warehouse" environmentIntensity={0.55} />
+      {/* Environnement HDRI hébergé localement (plus aucune dépendance CDN) */}
+      <Environment files="/hdri/empty_warehouse_01_1k.hdr" environmentIntensity={0.55} />
       <ambientLight intensity={0.18} />
       <spotLight
         position={[5, 10, 5]}
