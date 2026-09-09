@@ -9,8 +9,8 @@ export default function LoadingProgress({
   progress,
   status,
 }: LoadingProgressProps) {
+  // Nilai progress tetap dihitung untuk animasi garis putus-putus pada logo
   const value = Math.min(100, Math.max(0, progress));
-  const display = Math.floor(value).toString().padStart(3, "0");
 
   return (
     <div className="preloader__content relative flex h-full w-full flex-col justify-between p-8 text-zinc-100 md:p-12 select-none">
@@ -21,10 +21,11 @@ export default function LoadingProgress({
         <span>{status}</span>
       </header>
 
-      {/* Center: Logo & Persentase */}
-      <div className="relative z-10 flex flex-col items-center justify-center gap-8 md:gap-12">
+      {/* Center: Hanya Logo FP Saja */}
+      <div className="relative z-10 flex flex-col items-center justify-center">
         {/* FP Mark - Garis akan tergambar mengikuti persentase loading */}
-        <div className="preloader__mark relative h-20 w-20 md:h-28 md:w-28 text-zinc-100">
+        {/* Ukuran sedikit diperbesar (h-24/32) karena angka persentase dihilangkan */}
+        <div className="preloader__mark relative h-24 w-24 md:h-32 md:w-32 text-zinc-100">
           <svg
             viewBox="0 0 100 100"
             className="h-full w-full"
@@ -46,16 +47,6 @@ export default function LoadingProgress({
               className="transition-all duration-300 ease-out"
             />
           </svg>
-        </div>
-
-        {/* Persentase */}
-        <div className="flex items-start font-mono">
-          <span className="text-6xl font-light tracking-tighter tabular-nums md:text-8xl">
-            {display}
-          </span>
-          <span className="ml-2 mt-2 text-xl text-zinc-600 md:text-3xl">
-            %
-          </span>
         </div>
       </div>
 
