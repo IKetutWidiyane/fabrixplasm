@@ -18,19 +18,16 @@ export default function ProcessSection() {
   const [activeStep, setActiveStep] = useState(0);
 
   useGSAP(() => {
-    // Hanya jalankan animasi kompleks di Desktop
     let mm = gsap.matchMedia();
 
     mm.add("(min-width: 768px)", () => {
-      // Setup Timeline utama terikat pada scroll 400vh
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: containerRef.current,
           start: "top top",
           end: "bottom bottom",
-          scrub: 1.5, // 1.5 memberikan smoothing (cinematic feel)
+          scrub: 1, // Dibuat 1 agar pergerakan scroll lebih presisi
           onUpdate: (self) => {
-            // Hitung active step (0 sampai 3) berdasarkan persentase scroll
             const progress = self.progress;
             const currentStep = Math.min(3, Math.floor(progress * 4));
             setActiveStep(currentStep);
@@ -40,41 +37,32 @@ export default function ProcessSection() {
 
       // Animasi transisi gambar
       processData.forEach((_, idx) => {
-        if (idx === 0) return; // Gambar pertama diam sebagai base
+        if (idx === 0) return; // Gambar pertama (0) sudah tampil by default
 
-        const prevIdx = idx - 1;
+        // Gambar baru disapu dari bawah (inset 100%) ke atas (inset 0%)
+        tl.to(`.process-image-${idx}`, {
+          clipPath: "inset(0% 0% 0% 0%)",
+          duration: 1,
+          ease: "power2.inOut",
+        }, idx - 1); // Posisi di timeline (0, 1, 2)
 
-        // Timeline per transisi (menggunakan posisi indeks agar berurutan tepat)
-        tl.to(`.process-image-${prevIdx}`, {
-            scale: 0.95,
-            opacity: 0.5,
-            duration: 1,
-            ease: "power2.inOut",
-          }, idx)
-          
-          .fromTo(`.process-image-${idx}`,
-            { clipPath: "inset(0% 0% 100% 0%)", scale: 1.05 },
-            { clipPath: "inset(0% 0% 0% 0%)", scale: 1, duration: 1, ease: "power2.inOut" },
-            idx
-          )
-          
-          // Horizontal Parallax Kecil (memberi depth)
-          .fromTo(`.process-image-inner-${idx}`,
-            { x: "-40px" },
-            { x: "0px", duration: 1, ease: "power1.out" },
-            idx
-          );
+        // Efek parallax vertikal kecil
+        tl.fromTo(`.process-image-inner-${idx}`,
+          { y: "10%" },
+          { y: "0%", duration: 1, ease: "power2.out" },
+          idx - 1
+        );
       });
     });
 
-    return () => mm.revert(); // Cleanup
+    return () => mm.revert(); // Cleanup GSAP
   }, { scope: containerRef });
 
   return (
     <section className="relative z-10 bg-zinc-950 text-zinc-50">
       {/* 
         DESKTOP VERSION
-        Tinggi 400vh untuk menahan scroll, sementara isinya 100vh lengket (sticky) 
+        Tinggi 400vh untuk menahan scroll, isinya 100vh lengket (sticky) 
       */}
       <div ref={containerRef} className="hidden md:block relative h-[400vh] w-full">
         <div className="sticky top-0 h-screen w-full flex items-center overflow-hidden">
@@ -106,7 +94,7 @@ export default function ProcessSection() {
 
       {/* 
         MOBILE VERSION
-        Normal Scroll Sequence (Tidak dipaksakan sticky/gsap kompleks)
+        Normal Scroll Sequence
       */}
       <div className="md:hidden flex flex-col w-full py-24 px-6 gap-24">
         <div className="mb-8">

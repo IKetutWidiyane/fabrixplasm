@@ -1,8 +1,9 @@
 import { processData } from "@/data/processData";
 
 export default function ProcessSteps({ activeStep }: { activeStep: number }) {
+  // PERBAIKAN: Mengubah h-48 menjadi h-[300px] agar teks deskripsi tidak terpotong
   return (
-    <div className="relative h-48 w-full mt-12 overflow-hidden">
+    <div className="relative h-[300px] w-full mt-12 overflow-hidden">
       {processData.map((step, idx) => {
         const isActive = activeStep === idx;
         const isPast = activeStep > idx;

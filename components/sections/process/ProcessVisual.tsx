@@ -12,19 +12,21 @@ export default function ProcessVisual() {
       {processData.map((step, idx) => (
         <div
           key={step.id}
-          className={`process-image process-image-${idx} absolute inset-0 w-full h-full will-change-transform`}
-          // Gambar pertama muncul default, sisanya disembunyikan pakai clip-path
+          // PERBAIKAN 1: Tambahkan bg-zinc-900 pada layer ini agar menutupi tumpukan di bawahnya
+          className={`process-image process-image-${idx} absolute inset-0 w-full h-full will-change-transform bg-zinc-900`}
           style={{
-            clipPath: idx === 0 ? "inset(0% 0% 0% 0%)" : "inset(0% 0% 100% 0%)",
+            // PERBAIKAN 2: Inset 100% dari atas ke bawah agar selaras dengan animasi parallax di Section
+            clipPath: idx === 0 ? "inset(0% 0% 0% 0%)" : "inset(100% 0% 0% 0%)",
             zIndex: idx,
           }}
         >
-          {/* Inner image container untuk efek parallax horizontal */}
-          <div className={`process-image-inner process-image-inner-${idx} absolute top-0 -left-[5%] w-[110%] h-full`}>
+          {/* Inner image container */}
+          <div className={`process-image-inner process-image-inner-${idx} absolute inset-0 w-full h-full`}>
             <img
               src={step.image}
               alt={step.title}
-              className="w-full h-full object-cover grayscale opacity-80 mix-blend-lighten"
+              // PERBAIKAN 3: Hapus opacity-80 & mix-blend-lighten yang membuat gambar tembus pandang
+              className="w-full h-full object-cover grayscale brightness-75"
             />
           </div>
         </div>
