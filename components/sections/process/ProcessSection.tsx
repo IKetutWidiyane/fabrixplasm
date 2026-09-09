@@ -71,7 +71,7 @@ export default function ProcessSection() {
   }, { scope: containerRef });
 
   return (
-    <section className="bg-zinc-950 text-zinc-50">
+    <section className="relative z-10 bg-zinc-950 text-zinc-50">
       {/* 
         DESKTOP VERSION
         Tinggi 400vh untuk menahan scroll, sementara isinya 100vh lengket (sticky) 

@@ -26,3 +26,38 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+.preloader__logo-path {
+  stroke-dasharray: 220;
+  stroke-dashoffset: 220;
+  animation: fp-draw 1.8s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+}
+
+.preloader__scan {
+  animation: preloader-scan 2.2s ease-in-out infinite;
+}
+
+@keyframes fp-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes preloader-scan {
+  0% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+
+  20% {
+    opacity: 1;
+  }
+
+  80% {
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateY(80px);
+    opacity: 0;
+  }
+}
