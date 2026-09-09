@@ -1,17 +1,36 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { COMPANY_DATA } from "@/data/company";
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isVisible, setIsVisible] = useState(true); // State untuk show/hide navbar
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  
+  // Gunakan ref untuk melacak posisi scroll terakhir tanpa memicu re-render
+  const lastScrollY = useRef(0);
 
-  // Deteksi scroll untuk mengubah tampilan Navbar (Transparan -> Glassmorphism)
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
+      const currentScrollY = window.scrollY;
+
+      // 1. Logika untuk mengubah background (Transparan -> Glassmorphism)
+      setIsScrolled(currentScrollY > 50);
+
+      // 2. Logika untuk menyembunyikan/menampilkan Navbar berdasarkan arah scroll
+      if (currentScrollY > lastScrollY.current && currentScrollY > 80) {
+        // Jika scroll ke bawah dan sudah melewati 80px -> Sembunyikan
+        setIsVisible(false);
+      } else {
+        // Jika scroll ke atas atau berada paling atas -> Tampilkan
+        setIsVisible(true);
+      }
+
+      // Update posisi scroll terakhir
+      lastScrollY.current = currentScrollY;
     };
+
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -28,11 +47,15 @@ export default function Navbar() {
   return (
     <>
       <header
-        className={`fixed top-0 left-0 w-full z-[80] transition-all duration-500 font-mono text-[10px] md:text-xs uppercase tracking-[0.2em] ${
-          isScrolled 
+        className={`fixed top-0 left-0 w-full z-[80] transition-all duration-500 font-mono text-[10px] md:text-xs uppercase tracking-[0.2em] px-6 md:px-12
+          ${/* Efek Muncul/Tenggelam */ ""}
+          ${isVisible || isMobileMenuOpen ? "translate-y-0" : "-translate-y-full"}
+          ${/* Efek Glassmorphism saat discroll */ ""}
+          ${isScrolled 
             ? "bg-zinc-950/80 backdrop-blur-md border-b border-zinc-800/50 py-4" 
             : "bg-transparent py-6 md:py-8"
-        } px-6 md:px-12`}
+          }
+        `}
       >
         <div className="flex justify-between items-center w-full">
           {/* Logo / Nama Brand */}
