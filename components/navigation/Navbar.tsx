@@ -28,7 +28,7 @@ export default function Navbar() {
   return (
     <>
       <header
-        className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 font-mono text-[10px] md:text-xs uppercase tracking-[0.2em] ${
+        className={`fixed top-0 left-0 w-full z-[80] transition-all duration-500 font-mono text-[10px] md:text-xs uppercase tracking-[0.2em] ${
           isScrolled 
             ? "bg-zinc-950/80 backdrop-blur-md border-b border-zinc-800/50 py-4" 
             : "bg-transparent py-6 md:py-8"
@@ -67,7 +67,7 @@ export default function Navbar() {
 
       {/* Mobile Fullscreen Menu */}
       <div
-        className={`fixed inset-0 z-40 bg-zinc-950/95 backdrop-blur-xl flex flex-col items-center justify-center transition-all duration-500 ease-in-out md:hidden ${
+        className={`fixed inset-0 z-[70] bg-zinc-950/95 backdrop-blur-xl flex flex-col items-center justify-center transition-all duration-500 ease-in-out md:hidden ${
           isMobileMenuOpen 
             ? "opacity-100 pointer-events-auto translate-y-0" 
             : "opacity-0 pointer-events-none -translate-y-8"

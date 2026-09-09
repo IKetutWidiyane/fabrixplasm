@@ -1,16 +1,7 @@
 "use client";
 
-/**
- * Smart preloader — FABRIXPLASM.
- *
- * Charge les assets critiques du Hero 3D avec une progression réelle basée sur les
- * octets téléchargés, puis préchauffe en arrière-plan (idle) les assets non-critiques
- * des sections suivantes (CNC, Process) afin qu'elles apparaissent instantanément.
- */
-
 import { processData } from "@/data/processData";
 
-// -- Assets critiques : tout ce que le Hero 3D consomme réellement --
 export const CRITICAL_ASSETS: readonly string[] = [
   "/models/hero/nozzle.glb",
   "/textures/hero/color.webp",
@@ -20,35 +11,26 @@ export const CRITICAL_ASSETS: readonly string[] = [
   "/hdri/empty_warehouse_01_1k.hdr",
 ];
 
-// -- Assets non-critiques, préchargés en arrière-plan après le Hero --
 export const IDLE_ASSETS: readonly string[] = [
   "/images/cnc/cnc-machine.webp",
-  // Process — source unique de vérité dans data/processData.ts
   ...processData.map((step) => step.image),
 ];
 
-// Les fonts Geist pèsent peu : petit poids dans le calcul global de progression.
 const FONT_WEIGHT = 0.1;
 const MAX_LOAD_MS = 8000;
-const MIN_DISPLAY_MS = 900;
+// PERBAIKAN: Dinaikkan menjadi 2500ms (2.5 detik) agar logo FP punya waktu yang cukup untuk tergambar penuh dari 0 ke 100%.
+const MIN_DISPLAY_MS = 2500; 
 const FONT_FAMILIES = ["Geist Mono", "Geist Sans"];
 
 export function getStatus(fraction: number): string {
   if (fraction <= 0) return "INITIALIZING";
-  if (fraction < 0.25) return "LOADING TEXTURES";
-  if (fraction < 0.55) return "LOADING 3D MODEL";
-  if (fraction < 0.8) return "PREPARING SCENE";
-  if (fraction < 1) return "BUILDING WORLD";
+  if (fraction < 0.3) return "LOADING ASSETS";
+  if (fraction < 0.7) return "PREPARING SCENE";
   return "READY";
 }
 
 const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
 
-/**
- * Télécharge un asset et signale le progrès réel en octets.
- * Si la longueur est inconnue (ou fetch indisponible), l'asset est marqué [0,0]
- * et retiré du dénominateur afin de ne pas fausser la progression.
- */
 async function fetchWithProgress(
   url: string,
   onProgress: (loaded: number, total: number) => void,
@@ -76,21 +58,16 @@ async function fetchWithProgress(
   }
 }
 
-/** Force le chargement des @font-face (next/font) pour qu'ils ne tardent pas après l'intro. */
 async function forceFonts() {
   try {
     await Promise.allSettled(
       FONT_FAMILIES.map((family) => document.fonts.load(`600px "${family}"`, "FABRIXPLASM")),
     );
   } catch {
-    /* API indisponible (vieux navigateurs) : on continue sans elle. */
+    // Abaikan jika API tidak tersedia
   }
 }
 
-/**
- * Charge les assets critiques et émet des mises à jour (fraction 0..1, statut texte).
- * Garantit toujours un retour : minimum d'affichage + timeout de sécurité.
- */
 export async function loadCriticalAssets(
   onUpdate: (fraction: number, status: string) => void,
 ): Promise<void> {
@@ -126,6 +103,7 @@ export async function loadCriticalAssets(
       emit();
     }),
   );
+  
   const fontTask = forceFonts().then(() => {
     fontsReady = true;
     emit();
@@ -133,7 +111,7 @@ export async function loadCriticalAssets(
 
   await Promise.race([Promise.all([...tasks, fontTask]), sleep(MAX_LOAD_MS)]);
 
-  // Durée minimale d'affichage, puis passage à l'état "prêt" quoi qu'il arrive.
+  // Memastikan minimum waktu tampil terpenuhi sebelum layar hilang
   const elapsed = performance.now() - start;
   if (elapsed < MIN_DISPLAY_MS) {
     await sleep(MIN_DISPLAY_MS - elapsed);
@@ -141,10 +119,6 @@ export async function loadCriticalAssets(
   emit(1);
 }
 
-/**
- * Précharge les assets non-critiques (CNC, Process) en arrière-plan.
- * Non bloquant : il ne fait que remplir le cache navigateur.
- */
 export function preloadIdleAssets(): void {
   for (const url of IDLE_ASSETS) {
     const img = new Image();

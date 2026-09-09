@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import Navbar from "@/components/navigation/Navbar";
 import HeroScene from "./HeroScene";
 import MagneticButton from "@/components/ui/MagneticButton";
 import { animateHeroIntro } from "@/animations/heroIntro";
@@ -23,8 +22,6 @@ export default function Hero() {
 
       {/* UI Tetap (Fixed Overlay) */}
       <div className="fixed inset-0 z-10 p-6 md:p-10 pointer-events-none flex flex-col justify-between">
-        <Navbar />
-
         {/* Teks Utama */}
         <div className="hero-ui-fade flex-1 flex flex-col justify-center w-full max-w-5xl mt-8">
           <h1 className="text-[clamp(3.5rem,7.5vw,9rem)] leading-[0.85] tracking-tight font-bold uppercase">
