@@ -68,11 +68,11 @@ export default function Navbar() {
           <nav className="hidden md:flex gap-10 text-zinc-500 pointer-events-auto">
             {COMPANY_DATA.navLinks.map((link) => (
               <a 
-                key={link} 
-                href={`#${link.toLowerCase()}`} 
+                key={link.label} 
+                href={link.target} 
                 className="hover:text-zinc-100 transition-colors duration-300 relative group"
               >
-                {link}
+                {link.label}
                 {/* Efek Hover Garis Bawah Merambat */}
                 <span className="absolute -bottom-2 left-0 w-0 h-[1px] bg-zinc-100 transition-all duration-500 ease-out group-hover:w-full" />
               </a>
@@ -100,15 +100,15 @@ export default function Navbar() {
         <nav className="flex flex-col gap-8 text-center text-zinc-500 text-sm tracking-[0.3em]">
           {COMPANY_DATA.navLinks.map((link, idx) => (
             <a
-              key={link}
-              href={`#${link.toLowerCase()}`}
+              key={link.label}
+              href={link.target}
               onClick={() => setIsMobileMenuOpen(false)}
               className="hover:text-zinc-100 transition-colors duration-300"
               style={{
                 transitionDelay: isMobileMenuOpen ? `${idx * 100}ms` : "0ms"
               }}
             >
-              {link}
+              {link.label}
             </a>
           ))}
         </nav>

@@ -1,6 +1,20 @@
 export const COMPANY_DATA = {
   name: "FABRIXPLASM",
-  navLinks: ["WORK", "ABOUT", "CONTACT"],
+  tagline: "DIGITAL DESIGN. PHYSICAL PRECISION.",
+  location: "Bandar Lampung, Indonesia",
+  timezone: "GMT+7 (WIB)",
+  email: "hello@fabrixplasm.com",
   material: "STEEL 304",
   tolerance: "±0.05 MM",
+  navLinks: [
+    { label: "WORK", target: "#works" },
+    { label: "PROCESS", target: "#process" },
+    { label: "SERVICES", target: "#capabilities" },
+    { label: "CONTACT", target: "#contact" },
+  ],
+  socials: [
+    { label: "INSTAGRAM", href: "https://instagram.com" },
+    { label: "LINKEDIN", href: "https://linkedin.com" },
+    { label: "GITHUB", href: "https://github.com" },
+  ],
 };

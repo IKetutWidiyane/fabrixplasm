@@ -55,6 +55,7 @@ export default function CNCSection() {
 
   return (
     <section 
+      id="cnc"
       ref={containerRef} 
       className="relative w-full min-h-screen bg-[#0a0a0a] text-white py-32 px-6 md:px-12 lg:px-24 overflow-hidden"
     >

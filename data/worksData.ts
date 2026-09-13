@@ -1,0 +1,101 @@
+export interface WorkProject {
+  id: string;
+  number: string;
+  title: string;
+  category: string;
+  material: string;
+  method: string;
+  tolerance: string;
+  year: string;
+  description: string;
+  image: string;
+  clientSector: string;
+  layout: {
+    columnSpan: string; // e.g. "col-span-12 lg:col-span-7"
+    align: "left" | "right" | "center";
+    aspectRatio: string; // e.g. "aspect-[16/10]"
+    offsetY?: string; // negative margin for asymmetric overlap
+  };
+}
+
+export const worksData: WorkProject[] = [
+  {
+    id: "work-01",
+    number: "01",
+    title: "AEROSPACE MONOLITHIC BRACKET",
+    category: "AEROSPACE STRUCTURAL",
+    material: "TITANIUM TI-6AL-4V",
+    method: "5-AXIS SIMULTANEOUS CNC",
+    tolerance: "±0.008 MM",
+    year: "2026",
+    description:
+      "Milled from a solid 45kg billet down to a 1.8kg topology-optimized aerospace mount. Stress-relieved with zero vibration chatter across deep pockets.",
+    image: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?q=75&w=1400&auto=format&fit=crop",
+    clientSector: "DEFENSE & AVIONICS",
+    layout: {
+      columnSpan: "lg:col-span-7",
+      align: "left",
+      aspectRatio: "aspect-[16/11]",
+    },
+  },
+  {
+    id: "work-02",
+    number: "02",
+    title: "HIGH-IMPACT CHASSIS PLATE",
+    category: "OFF-ROAD VEHICLE DYNAMICS",
+    material: "HARDOX 450 WEAR STEEL",
+    method: "400A PLASMA + CNC FORMING",
+    tolerance: "±0.25 MM",
+    year: "2026",
+    description:
+      "Heavy-gauge impact armor skid plate cut with robotic multi-axis beveling. Engineered to resist cyclic torsional shock in extreme desert endurance testing.",
+    image: "https://images.unsplash.com/photo-1504917599217-d4dc5ebe6122?q=75&w=1400&auto=format&fit=crop",
+    clientSector: "MOTORSPORT ENGINEERING",
+    layout: {
+      columnSpan: "lg:col-span-6 lg:ml-auto",
+      align: "right",
+      aspectRatio: "aspect-[4/5]",
+      offsetY: "lg:-mt-28",
+    },
+  },
+  {
+    id: "work-03",
+    number: "03",
+    title: "LIQUID-COOLED SENSOR ENCLOSURE",
+    category: "AUTONOMOUS NAVIGATION",
+    material: "ALUMINUM 6061-T6 ANODIZED",
+    method: "CNC TURNING + LASER ENGRAVING",
+    tolerance: "±0.012 MM",
+    year: "2026",
+    description:
+      "Hermetically sealed lidar sensor housing with internal helical cooling jackets. Surface treated with Type III Class 2 hard-coat black anodizing.",
+    image: "https://images.unsplash.com/photo-1563986768609-322da13575f3?q=75&w=1400&auto=format&fit=crop",
+    clientSector: "ROBOTICS & LIDAR",
+    layout: {
+      columnSpan: "lg:col-span-7",
+      align: "left",
+      aspectRatio: "aspect-[16/10]",
+      offsetY: "lg:-mt-20",
+    },
+  },
+  {
+    id: "work-04",
+    number: "04",
+    title: "CONFORMAL TURBINE MANIFOLD",
+    category: "ENERGY & THERMAL FLUIDS",
+    material: "INCONEL 718 SUPERALLOY",
+    method: "DMLS ADDITIVE + POST-MACHINING",
+    tolerance: "±0.015 MM",
+    year: "2026",
+    description:
+      "Hybrid additive-manufactured turbine shroud featuring organic internal cooling channels impossible to produce via traditional tooling, finished on 5-axis CNC.",
+    image: "https://images.unsplash.com/photo-1535813547-99c456a41d4a?q=75&w=1400&auto=format&fit=crop",
+    clientSector: "PROPULSION & ENERGY",
+    layout: {
+      columnSpan: "lg:col-span-9 lg:mx-auto",
+      align: "center",
+      aspectRatio: "aspect-[16/9]",
+      offsetY: "lg:mt-12",
+    },
+  },
+];

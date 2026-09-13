@@ -4,6 +4,10 @@ import Hero from "@/components/hero/Hero";
 import Navbar from "@/components/navigation/Navbar";
 import CNCSection from "@/components/sections/cnc/CNCSection";
 import ProcessSection from "@/components/sections/process/ProcessSection";
+import CapabilitiesSection from "@/components/sections/capabilities/CapabilitiesSection";
+import WorksSection from "@/components/sections/works/WorksSection";
+import ContactSection from "@/components/sections/contact/ContactSection";
+import Footer from "@/components/sections/contact/Footer";
 import CustomCursor from "@/components/ui/CustomCursor";
 import Preloader from "@/components/loader/Preloader";
 import { useLenis } from "@/hooks/useLenis";
@@ -14,21 +18,35 @@ export default function Home() {
   const preloader = useAssetPreloader();
 
   return (
-    <main className="relative min-h-screen">
+    <main className="relative min-h-screen bg-[#070707]">
       <Preloader state={preloader} />
 
-      {/* Navbar rendue à la racine (au-dessus des sections) :
-          dans le Hero elle était plafonnée à z-index 10 et des divs
-          des sections 02/03 la recouvraient. */}
+      {/* Industrial Navigation */}
       <Navbar />
 
-      {/* Le Hero n'est monté qu'une fois les assets critiques prêts :
-          son canvas 3D charge alors depuis le cache navigateur, sans double réseau. */}
+      {/* 01 — HERO (Mounted once critical assets are cached) */}
       {preloader.done ? <Hero /> : null}
 
+      {/* Desktop Hardware Accelerated Custom Cursor */}
       <CustomCursor />
+
+      {/* 02 — CNC MACHINING */}
       <CNCSection />
+
+      {/* 03 — PROCESS */}
       <ProcessSection />
+
+      {/* 04 — CAPABILITIES */}
+      <CapabilitiesSection />
+
+      {/* 05 — SELECTED WORKS */}
+      <WorksSection />
+
+      {/* 06 — CONTACT */}
+      <ContactSection />
+
+      {/* INDUSTRIAL FOOTER */}
+      <Footer />
     </main>
   );
 }
