@@ -1,21 +1,33 @@
 "use client";
-import { useRef, ReactNode } from "react";
+import { useRef, useEffect, ReactNode } from "react";
 import gsap from "gsap";
 
 export default function MagneticButton({ children }: { children: ReactNode }) {
   const ref = useRef<HTMLDivElement>(null);
+  const quickX = useRef<((value: number) => void) | null>(null);
+  const quickY = useRef<((value: number) => void) | null>(null);
+  const isFinePointer = useRef(false);
+
+  useEffect(() => {
+    isFinePointer.current = window.matchMedia("(pointer: fine)").matches;
+    if (ref.current && isFinePointer.current) {
+      quickX.current = gsap.quickTo(ref.current, "x", { duration: 0.4, ease: "power3.out" });
+      quickY.current = gsap.quickTo(ref.current, "y", { duration: 0.4, ease: "power3.out" });
+    }
+  }, []);
 
   const handleMouseMove = (e: React.MouseEvent) => {
-    const { clientX, clientY } = e;
+    if (!isFinePointer.current || !ref.current || !quickX.current || !quickY.current) return;
     const element = ref.current;
-    if (!element) return;
     const { left, top, width, height } = element.getBoundingClientRect();
-    const x = (clientX - (left + width / 2)) * 0.3;
-    const y = (clientY - (top + height / 2)) * 0.3;
-    gsap.to(element, { x, y, duration: 0.5, ease: "power3.out" });
+    const x = (e.clientX - (left + width / 2)) * 0.3;
+    const y = (e.clientY - (top + height / 2)) * 0.3;
+    quickX.current(x);
+    quickY.current(y);
   };
 
   const handleMouseLeave = () => {
+    if (!isFinePointer.current || !ref.current) return;
     gsap.to(ref.current, { x: 0, y: 0, duration: 0.5, ease: "elastic.out(1, 0.3)" });
   };
 

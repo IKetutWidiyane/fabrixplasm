@@ -34,7 +34,7 @@ export default function CNCSpecs() {
   return (
     <div 
       ref={containerRef}
-      className="bg-[#0a0a0a]/80 backdrop-blur-xl border border-zinc-800 p-8 shadow-2xl relative shadow-black/50"
+      className="bg-[#0a0a0a]/95 md:bg-[#0a0a0a]/80 md:backdrop-blur-xl border border-zinc-800 p-8 shadow-2xl relative shadow-black/50"
     >
       <div className="text-zinc-500 font-mono text-xs mb-8">CNC CAPABILITIES</div>
       

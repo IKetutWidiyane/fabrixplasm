@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, Suspense, useEffect, useMemo } from "react";
+import { useRef, Suspense, useEffect, useMemo, useState } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Environment } from "@react-three/drei";
 import * as THREE from "three";
@@ -48,11 +48,14 @@ function SceneContent({ scrollProxyRef }: { scrollProxyRef: React.RefObject<HTML
   }, [scrollProxyRef]);
 
   useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (window.matchMedia("(pointer: coarse)").matches) return;
+
     const onMove = (e: MouseEvent) => {
       mouse.current.x = (e.clientX / window.innerWidth) * 2 - 1;
       mouse.current.y = -(e.clientY / window.innerHeight) * 2 + 1;
     };
-    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mousemove", onMove, { passive: true });
     return () => window.removeEventListener("mousemove", onMove);
   }, []);
 
@@ -124,6 +127,8 @@ function SceneContent({ scrollProxyRef }: { scrollProxyRef: React.RefObject<HTML
         intensity={5}
         castShadow
         shadow-bias={-0.0001}
+        shadow-mapSize-width={1024}
+        shadow-mapSize-height={1024}
       />
 
       <pointLight ref={lightRef} color="#FF6A00" intensity={0} distance={9} />
@@ -145,12 +150,40 @@ function SceneContent({ scrollProxyRef }: { scrollProxyRef: React.RefObject<HTML
 }
 
 export default function HeroScene({ scrollProxyRef }: { scrollProxyRef: React.RefObject<HTMLDivElement | null> }) {
+  const [isInView, setIsInView] = useState(true);
+
+  // Hentikan rendering WebGL saat hero selesai di-scroll (menghemat GPU/baterai 100% saat membaca section lain)
+  useEffect(() => {
+    if (!scrollProxyRef.current) return;
+    const trigger = ScrollTrigger.create({
+      trigger: scrollProxyRef.current,
+      start: "top top",
+      end: "bottom top",
+      onEnter: () => setIsInView(true),
+      onLeave: () => setIsInView(false),
+      onEnterBack: () => setIsInView(true),
+      onLeaveBack: () => setIsInView(false),
+    });
+
+    return () => trigger.kill();
+  }, [scrollProxyRef]);
+
   return (
-    <div className="fixed inset-0 z-0 pointer-events-none bg-[#0B0B0A]">
+    <div 
+      className="fixed inset-0 z-0 pointer-events-none bg-[#0B0B0A]"
+      style={{ visibility: isInView ? "visible" : "hidden" }}
+    >
       <Canvas
+        frameloop={isInView ? "always" : "never"}
+        dpr={[1, 1.5]}
         shadows
         camera={{ position: [3.35, 3.85, 4.35], fov: 35 }}
-        gl={{ antialias: true, toneMapping: THREE.ACESFilmicToneMapping }}
+        gl={{
+          antialias: true,
+          toneMapping: THREE.ACESFilmicToneMapping,
+          powerPreference: "high-performance",
+          stencil: false,
+        }}
       >
         <Suspense fallback={null}>
           <SceneContent scrollProxyRef={scrollProxyRef} />

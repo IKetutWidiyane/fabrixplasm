@@ -12,27 +12,28 @@ export default function Navbar() {
   const lastScrollY = useRef(0);
 
   useEffect(() => {
+    let rafId: number | null = null;
+
     const handleScroll = () => {
-      const currentScrollY = window.scrollY;
+      if (rafId !== null) return;
+      rafId = requestAnimationFrame(() => {
+        rafId = null;
+        const currentScrollY = window.scrollY;
+        const nextScrolled = currentScrollY > 50;
+        const nextVisible = !(currentScrollY > lastScrollY.current && currentScrollY > 80);
 
-      // 1. Logika untuk mengubah background (Transparan -> Glassmorphism)
-      setIsScrolled(currentScrollY > 50);
+        setIsScrolled((prev) => (prev !== nextScrolled ? nextScrolled : prev));
+        setIsVisible((prev) => (prev !== nextVisible ? nextVisible : prev));
 
-      // 2. Logika untuk menyembunyikan/menampilkan Navbar berdasarkan arah scroll
-      if (currentScrollY > lastScrollY.current && currentScrollY > 80) {
-        // Jika scroll ke bawah dan sudah melewati 80px -> Sembunyikan
-        setIsVisible(false);
-      } else {
-        // Jika scroll ke atas atau berada paling atas -> Tampilkan
-        setIsVisible(true);
-      }
-
-      // Update posisi scroll terakhir
-      lastScrollY.current = currentScrollY;
+        lastScrollY.current = currentScrollY;
+      });
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      if (rafId !== null) cancelAnimationFrame(rafId);
+    };
   }, []);
 
   // Kunci scroll saat mobile menu terbuka

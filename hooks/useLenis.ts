@@ -27,7 +27,8 @@ export function useLenis() {
 
     lenis.on("scroll", onScroll);
     gsap.ticker.add(onTicker);
-    gsap.ticker.lagSmoothing(0);
+    // lagSmoothing(500, 33) mencegah stutter saat terjadi lonjakan GC / CPU di HP dan laptop hemat daya
+    gsap.ticker.lagSmoothing(500, 33);
     window.addEventListener(PRELOADER_READY_EVENT, onPreloaderReady);
 
     return () => {

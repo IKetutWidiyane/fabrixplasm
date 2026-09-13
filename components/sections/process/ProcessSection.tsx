@@ -18,7 +18,7 @@ export default function ProcessSection() {
   const [activeStep, setActiveStep] = useState(0);
 
   useGSAP(() => {
-    let mm = gsap.matchMedia();
+    const mm = gsap.matchMedia();
 
     mm.add("(min-width: 768px)", () => {
       const tl = gsap.timeline({
@@ -30,7 +30,7 @@ export default function ProcessSection() {
           onUpdate: (self) => {
             const progress = self.progress;
             const currentStep = Math.min(3, Math.floor(progress * 4));
-            setActiveStep(currentStep);
+            setActiveStep((prev) => (prev !== currentStep ? currentStep : prev));
           },
         },
       });
@@ -109,7 +109,13 @@ export default function ProcessSection() {
               <span>0{idx + 1} / 04</span>
             </div>
             <div className="w-full aspect-[4/5] bg-zinc-900 relative overflow-hidden">
-              <img src={step.image} alt={step.title} className="w-full h-full object-cover grayscale mix-blend-lighten" />
+              <img
+                src={step.image}
+                alt={step.title}
+                loading="lazy"
+                decoding="async"
+                className="w-full h-full object-cover grayscale mix-blend-lighten"
+              />
             </div>
             <div>
               <h4 className="text-2xl font-bold mb-2">{step.title}</h4>

@@ -120,9 +120,20 @@ export async function loadCriticalAssets(
 }
 
 export function preloadIdleAssets(): void {
-  for (const url of IDLE_ASSETS) {
-    const img = new Image();
-    img.decoding = "async";
-    img.src = url;
+  const load = () => {
+    for (const url of IDLE_ASSETS) {
+      const img = new Image();
+      img.decoding = "async";
+      img.src = url;
+    }
+  };
+
+  if (typeof window !== "undefined" && "requestIdleCallback" in window) {
+    (window as Window & { requestIdleCallback: (cb: () => void, opts?: { timeout: number }) => void }).requestIdleCallback(
+      () => load(),
+      { timeout: 3000 }
+    );
+  } else {
+    setTimeout(load, 1500);
   }
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useEffect } from "react";
 import { useGSAP } from "@gsap/react";
 import { revealImageCut } from "@/animations/cncReveal";
 import { setupMouseParallax, resetParallax } from "@/animations/cncHover";
@@ -10,11 +10,14 @@ export default function CNCVisual() {
   const containerRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
   const cursorRef = useRef<HTMLDivElement>(null);
-  const updateParallax = useRef<Function | null>(null);
+  const xSpanRef = useRef<HTMLSpanElement>(null);
+  const ySpanRef = useRef<HTMLSpanElement>(null);
+  const updateParallax = useRef<((clientX: number, clientY: number, containerRect: DOMRect) => void) | null>(null);
+  const isFinePointer = useRef(false);
 
-  // State micro-interaction: Realtime CNC Coordinates & Hover State
-  const [coords, setCoords] = useState({ x: 0, y: 0 });
-  const [isHovered, setIsHovered] = useState(false);
+  useEffect(() => {
+    isFinePointer.current = window.matchMedia("(pointer: fine)").matches;
+  }, []);
 
   useGSAP(() => {
     if (containerRef.current && imageRef.current) {
@@ -24,7 +27,7 @@ export default function CNCVisual() {
   }, { scope: containerRef });
 
   const handleMouseMove = (e: React.MouseEvent) => {
-    if (!containerRef.current) return;
+    if (!containerRef.current || !isFinePointer.current) return;
     const rect = containerRef.current.getBoundingClientRect();
     
     // 1. Mouse Parallax
@@ -32,10 +35,15 @@ export default function CNCVisual() {
       updateParallax.current(e.clientX, e.clientY, rect);
     }
 
-    // 2. Realtime CNC Coordinate calculation (simulasi mm dari pusat gambar)
+    // 2. Realtime CNC Coordinate calculation langsung via DOM Ref (0 React re-render)
     const posX = Math.round((e.clientX - rect.left - rect.width / 2) * 1.8);
     const posY = Math.round((e.clientY - rect.top - rect.height / 2) * 1.8);
-    setCoords({ x: posX, y: posY });
+    if (xSpanRef.current) {
+      xSpanRef.current.textContent = `${posX >= 0 ? `+${posX}` : posX}mm`;
+    }
+    if (ySpanRef.current) {
+      ySpanRef.current.textContent = `${posY >= 0 ? `+${posY}` : posY}mm`;
+    }
 
     // 3. Laser Reticle Micro Interaction Position
     if (cursorRef.current) {
@@ -45,17 +53,20 @@ export default function CNCVisual() {
     }
   };
 
-  const handleMouseEnter = () => setIsHovered(true);
+  const handleMouseEnter = () => {
+    if (!isFinePointer.current) return;
+    if (cursorRef.current) cursorRef.current.style.opacity = "1";
+  };
 
   const handleMouseLeave = () => {
-    setIsHovered(false);
+    if (cursorRef.current) cursorRef.current.style.opacity = "0";
     if (imageRef.current) resetParallax(imageRef.current);
   };
 
   return (
     <div 
       ref={containerRef}
-      className="relative w-full aspect-[16/10] lg:aspect-[16/9] overflow-hidden bg-[#0a0a0a] group border border-zinc-800/80 rounded-sm cursor-none select-none"
+      className="relative w-full aspect-[16/10] lg:aspect-[16/9] overflow-hidden bg-[#0a0a0a] group border border-zinc-800/80 rounded-sm md:cursor-none select-none"
       onMouseMove={handleMouseMove}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
@@ -65,6 +76,8 @@ export default function CNCVisual() {
         ref={imageRef}
         src="/images/cnc/cnc-machine.webp"
         alt="CNC Machining Process"
+        loading="lazy"
+        decoding="async"
         className="absolute -top-[5%] -left-[5%] w-[110%] h-[110%] max-w-none object-cover brightness-75 group-hover:brightness-95 transition-[filter] duration-700"
       />
 
@@ -79,8 +92,8 @@ export default function CNCVisual() {
 
       {/* HUD OVERLAY - REALTIME COORDINATE TRACKER */}
       <div className="absolute top-4 right-4 font-mono text-[10px] text-zinc-300 pointer-events-none bg-black/70 backdrop-blur-md px-3 py-1 border border-zinc-800 rounded z-10 flex items-center gap-3">
-        <span><strong className="text-[#FF6A00]">X:</strong> {coords.x >= 0 ? `+${coords.x}` : coords.x}mm</span>
-        <span><strong className="text-[#FF6A00]">Y:</strong> {coords.y >= 0 ? `+${coords.y}` : coords.y}mm</span>
+        <span><strong className="text-[#FF6A00]">X:</strong> <span ref={xSpanRef}>+0mm</span></span>
+        <span><strong className="text-[#FF6A00]">Y:</strong> <span ref={ySpanRef}>+0mm</span></span>
       </div>
 
       {/* HUD OVERLAY - SPEC INFO FOOTER */}
@@ -91,9 +104,7 @@ export default function CNCVisual() {
       {/* MICRO INTERACTION: LASER TARGET RETICLE */}
       <div 
         ref={cursorRef}
-        className={`absolute top-0 left-0 -translate-x-1/2 -translate-y-1/2 pointer-events-none transition-opacity duration-200 z-30 ${
-          isHovered ? "opacity-100" : "opacity-0"
-        }`}
+        className="absolute top-0 left-0 -translate-x-1/2 -translate-y-1/2 pointer-events-none transition-opacity duration-200 z-30 opacity-0"
       >
         <div className="relative flex items-center justify-center">
           {/* Outer ring */}
