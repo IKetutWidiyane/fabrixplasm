@@ -12,7 +12,7 @@ export default function CNCVisual() {
   const cursorRef = useRef<HTMLDivElement>(null);
   const xSpanRef = useRef<HTMLSpanElement>(null);
   const ySpanRef = useRef<HTMLSpanElement>(null);
-  const updateParallax = useRef<((clientX: number, clientY: number, containerRect: DOMRect) => void) | null>(null);
+  const updateParallax = useRef<Function | null>(null);
   const isFinePointer = useRef(false);
 
   useEffect(() => {

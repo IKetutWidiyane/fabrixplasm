@@ -94,3 +94,4 @@ export const capabilitiesData: CapabilityItemData[] = [
     tags: ["EXPRESS 48H", "CMM INSPECTED", "FUNCTIONAL ASSEMBLY"],
   },
 ];
+
