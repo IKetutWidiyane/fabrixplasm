@@ -7,9 +7,9 @@ export const COMPANY_DATA = {
   material: "STEEL 304",
   tolerance: "±0.05 MM",
   navLinks: [
-    { label: "WORK", target: "#works" },
     { label: "PROCESS", target: "#process" },
     { label: "SERVICES", target: "#capabilities" },
+    { label: "WORK", target: "#works" },
     { label: "CONTACT", target: "#contact" },
   ],
   socials: [

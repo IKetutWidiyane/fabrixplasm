@@ -36,7 +36,7 @@ export const worksData: WorkProject[] = [
     description:
       "Milled from a solid 45kg billet down to a 1.8kg topology-optimized aerospace mount. Stress-relieved with zero vibration chatter across deep pockets.",
     image:
-      "https://images.unsplash.com/photo-1581092160607-ee22621dd758?fm=webp&q=70&w=1400&auto=format&fit=crop",
+      "/images/works/aero-work1.webp",
     clientSector: "DEFENSE & AVIONICS",
     layout: {
       columnSpan: "lg:col-span-6",
@@ -57,7 +57,7 @@ export const worksData: WorkProject[] = [
     description:
       "Heavy-gauge impact armor skid plate cut with robotic multi-axis beveling. Engineered to resist cyclic torsional shock in extreme desert endurance testing.",
     image:
-      "https://images.unsplash.com/photo-1504917599217-d4dc5ebe6122?fm=webp&q=70&w=1400&auto=format&fit=crop",
+      "/images/works/chasis-work2.webp",
     clientSector: "MOTORSPORT ENGINEERING",
     layout: {
       columnSpan: "lg:col-span-6",
@@ -78,7 +78,7 @@ export const worksData: WorkProject[] = [
     description:
       "Hermetically sealed lidar sensor housing with internal helical cooling jackets. Surface treated with Type III Class 2 hard-coat black anodizing.",
     image:
-      "https://images.unsplash.com/photo-1563986768609-322da13575f3?fm=webp&q=70&w=1400&auto=format&fit=crop",
+      "/images/works/liquid-work3.webp",
     clientSector: "ROBOTICS & LIDAR",
     layout: {
       columnSpan: "lg:col-span-6",
@@ -99,7 +99,7 @@ export const worksData: WorkProject[] = [
     description:
       "Hybrid additive-manufactured turbine shroud featuring organic internal cooling channels impossible to produce via traditional tooling, finished on 5-axis CNC.",
     image:
-      "https://images.unsplash.com/photo-1535813547-99c456a41d4a?fm=webp&q=70&w=1400&auto=format&fit=crop",
+      "/images/works/manifold-work4.webp",
     clientSector: "PROPULSION & ENERGY",
     layout: {
       columnSpan: "lg:col-span-6",
