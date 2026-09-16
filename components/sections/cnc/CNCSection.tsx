@@ -1,56 +1,21 @@
 "use client";
 
 import { useRef } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import CNCVisual from "./CNCVisual";
 import CNCSpecs from "./CNCSpecs";
 import CNCMaterials from "./CNCMaterials";
-
-// Register plugin
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger);
-}
+import { setupSectionHeaderReveal } from "@/animations/sectionHeaderReveal";
 
 export default function CNCSection() {
   const containerRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLDivElement>(null);
 
   useGSAP(() => {
-    // Timeline utama untuk storytelling scroll
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: containerRef.current,
-        // UBAH BARIS INI: Animasi dimulai saat ujung atas section menyentuh 90% tinggi layar (hampir paling bawah)
-        start: "top 90%", 
-        end: "bottom 80%",
-        toggleActions: "play none none reverse",
-      },
-    });
-
-    // 1. Reveal teks pembuka
-    const texts = gsap.utils.toArray(".reveal-text");
-    tl.fromTo(
-      texts,
-      { y: 50, opacity: 0, clipPath: "polygon(0 0, 100% 0, 100% 0, 0 0)" },
-      {
-        y: 0,
-        opacity: 1,
-        clipPath: "polygon(0 0, 100% 0, 100% 100%, 0 100%)",
-        duration: 1,
-        stagger: 0.15,
-        ease: "power4.out",
-      }
-    );
-
-    // 2. Teks kecil fade in
-    tl.fromTo(
-      ".reveal-subtext",
-      { opacity: 0, y: 10 },
-      { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" },
-      "-=0.5"
-    );
+    if (containerRef.current) {
+      // Reveal header konsisten dengan Capabilities / Works / Contact
+      setupSectionHeaderReveal(containerRef.current, containerRef.current);
+    }
   }, { scope: containerRef });
 
   return (
@@ -61,17 +26,18 @@ export default function CNCSection() {
     >
       {/* HEADER TYPOGRAPHY */}
       <div className="mb-20" ref={titleRef}>
-        <div className="text-zinc-500 font-mono text-sm tracking-widest mb-8 reveal-subtext">
+        <div className="reveal-divider w-full h-px bg-zinc-800 mb-8" />
+        <div className="reveal-fade-up text-zinc-500 font-mono text-sm tracking-widest mb-8">
           02 — CNC MACHINING
         </div>
         
         <h2 className="text-[clamp(2.6rem,11vw,7rem)] font-bold tracking-tighter leading-[1.1]">
-          <div className="reveal-text">PRECISION</div>
-          <div className="reveal-text">BUILT INTO</div>
-          <div className="reveal-text">EVERY CUT.</div>
+          <div className="reveal-headline">PRECISION</div>
+          <div className="reveal-headline">BUILT INTO</div>
+          <div className="reveal-headline">EVERY CUT.</div>
         </h2>
         
-        <p className="mt-8 max-w-md text-zinc-400 text-lg reveal-subtext">
+        <p className="mt-8 max-w-md text-zinc-400 text-lg reveal-fade-up">
           Computer-controlled machining for precise, repeatable, and production-ready components.
         </p>
       </div>

@@ -1,11 +1,26 @@
 "use client";
 
 import { useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useGSAP } from "@gsap/react";
 import { worksData } from "@/data/worksData";
 import { WorkItem } from "./WorkItem";
+import { setupSectionHeaderReveal } from "@/animations/sectionHeaderReveal";
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
 export default function WorksSection() {
   const containerRef = useRef<HTMLElement>(null);
+
+  // Reveal header section saat scroll (gaya CNCSection / Awwwards)
+  useGSAP(() => {
+    if (containerRef.current) {
+      setupSectionHeaderReveal(containerRef.current, containerRef.current);
+    }
+  }, { scope: containerRef });
 
   return (
     <section
@@ -15,14 +30,15 @@ export default function WorksSection() {
     >
       {/* SECTION HEADER */}
       <div className="mb-20 lg:mb-32 max-w-4xl">
-        <div className="text-zinc-500 font-mono text-sm tracking-widest mb-6">
+        <div className="reveal-divider w-full h-px bg-zinc-800 mb-10 md:mb-14" />
+        <div className="reveal-fade-up text-zinc-500 font-mono text-sm tracking-widest mb-6">
           05 — SELECTED WORKS
         </div>
-        <h2 className="text-4xl sm:text-6xl md:text-7xl font-bold tracking-tighter leading-[1.05]">
-          PROOF OF PRECISION.
-          <span className="block text-zinc-500">ENGINEERED RESULTS.</span>
+        <h2 className="text-[clamp(2.4rem,10vw,7rem)] font-bold tracking-tighter leading-[1.05]">
+          <span className="reveal-headline block">PROOF OF PRECISION.</span>
+          <span className="reveal-headline block text-zinc-500">ENGINEERED RESULTS.</span>
         </h2>
-        <p className="mt-8 text-zinc-400 text-base md:text-lg max-w-xl leading-relaxed">
+        <p className="reveal-fade-up mt-8 text-zinc-400 text-base md:text-lg max-w-xl leading-relaxed">
           A showcase of parts, sub-assemblies, and heavy-duty structural components fabricated to critical customer specifications.
         </p>
       </div>

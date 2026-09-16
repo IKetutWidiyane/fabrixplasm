@@ -1,9 +1,17 @@
 "use client";
 
 import { useRef, useState, useEffect } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useGSAP } from "@gsap/react";
 import { capabilitiesData, CapabilityItemData } from "@/data/capabilitiesData";
 import { CapabilityItem } from "./CapabilityItem";
 import { CapabilityPreview, CapabilityPreviewHandle } from "./CapabilityPreview";
+import { setupSectionHeaderReveal } from "@/animations/sectionHeaderReveal";
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
 export default function CapabilitiesSection() {
   const containerRef = useRef<HTMLElement>(null);
@@ -14,6 +22,13 @@ export default function CapabilitiesSection() {
   useEffect(() => {
     isFinePointer.current = window.matchMedia("(pointer: fine)").matches;
   }, []);
+
+  // Reveal header section saat scroll (gaya CNCSection / Awwwards)
+  useGSAP(() => {
+    if (containerRef.current) {
+      setupSectionHeaderReveal(containerRef.current, containerRef.current);
+    }
+  }, { scope: containerRef });
 
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!isFinePointer.current || !previewRef.current) return;
@@ -37,14 +52,15 @@ export default function CapabilitiesSection() {
 
       {/* SECTION HEADER */}
       <div className="mb-16 md:mb-24 max-w-4xl">
-        <div className="text-zinc-500 font-mono text-sm tracking-widest mb-6">
+        <div className="reveal-divider w-full h-px bg-zinc-800 mb-10 md:mb-14" />
+        <div className="reveal-fade-up text-zinc-500 font-mono text-sm tracking-widest mb-6">
           04 — CAPABILITIES
         </div>
         <h2 className="text-[clamp(2.4rem,10vw,7rem)] font-bold tracking-tighter leading-[1.05]">
-          WHAT WE BUILD.
-          <span className="block text-zinc-500">DIGITAL TO PHYSICAL.</span>
+          <span className="reveal-headline block">WHAT WE BUILD.</span>
+          <span className="reveal-headline block text-zinc-500">DIGITAL TO PHYSICAL.</span>
         </h2>
-        <p className="mt-8 text-zinc-400 text-base md:text-lg max-w-xl leading-relaxed">
+        <p className="reveal-fade-up mt-8 text-zinc-400 text-base md:text-lg max-w-xl leading-relaxed">
           From high-tolerance 5-axis aerospace geometries to multi-ton structural steel plasma severance. Engineered for repeatability, speed, and precision.
         </p>
       </div>
