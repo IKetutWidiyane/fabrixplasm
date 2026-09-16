@@ -3,6 +3,7 @@
 import { useRef, Suspense, useEffect, useMemo, useState } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Environment } from "@react-three/drei";
+import { EffectComposer, Bloom, Vignette } from "@react-three/postprocessing";
 import * as THREE from "three";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -33,7 +34,6 @@ function SceneContent({ scrollProxyRef }: { scrollProxyRef: React.RefObject<HTML
   const prefersReducedMotion = useReducedMotion();
   const initialSample = useMemo(() => sampleCutProgress(0), []);
 
-  // Progres scene dikendalikan scroll (0 → 1) via ScrollTrigger pada spacer hero.
   useEffect(() => {
     if (!scrollProxyRef.current) return;
     const st = ScrollTrigger.create({
@@ -69,11 +69,9 @@ function SceneContent({ scrollProxyRef }: { scrollProxyRef: React.RefObject<HTML
     const dt = Math.min(delta, 0.05);
     clock.current += dt;
 
-    // Smoothing progres scroll agar gerakan nozzle terasa berat / mekanik.
     const target = prefersReducedMotion ? 1 : targetProgressRef.current;
     progressRef.current += (target - progressRef.current) * (1 - Math.exp(-6 * dt));
 
-    // Single-pass (tanpa loop): progress 0 = parkir, 1 = selesai & statis.
     const sample: CutSample = prefersReducedMotion
       ? sampleCutProgress(1)
       : sampleCutProgress(progressRef.current);
@@ -92,24 +90,27 @@ function SceneContent({ scrollProxyRef }: { scrollProxyRef: React.RefObject<HTML
     }
 
     if (lightRef.current) {
-      lightRef.current.position.set(smoothed.current.x, -0.12, smoothed.current.z);
-      const targetIntensity = sample.cutting ? 12 + Math.sin(clock.current * 48) * 3 : 0;
-      const lightFollow = 1 - Math.exp(-14 * dt);
+      lightRef.current.position.set(smoothed.current.x, 0.05, smoothed.current.z);
+      // Intensitas dinaikkan & ditambah flickering acak khas pemotong plasma
+      const flicker = (Math.random() - 0.5) * 4;
+      const targetIntensity = sample.cutting ? 25 + Math.sin(clock.current * 60) * 6 + flicker : 0;
+      const lightFollow = 1 - Math.exp(-18 * dt);
       lightRef.current.intensity += (targetIntensity - lightRef.current.intensity) * lightFollow;
     }
 
     const focus = Math.min(sample.progress, 1);
-    const camX = mouse.current.x * 0.3 + 3.35 - focus * 0.35;
-    const camY = mouse.current.y * 0.25 + 3.85 - focus * 0.15;
-    const camZ = 4.35 - focus * 0.25;
+    // Kamera diperendah (Y disesuaikan) agar sudut pandang lebih sinematik
+    const camX = mouse.current.x * 0.35 + 3.1 - focus * 0.35;
+    const camY = mouse.current.y * 0.2 + 2.8 - focus * 0.15;
+    const camZ = 3.8 - focus * 0.25;
     camera.position.x += (camX - camera.position.x) * (1 - Math.exp(-3 * dt));
     camera.position.y += (camY - camera.position.y) * (1 - Math.exp(-3 * dt));
     camera.position.z += (camZ - camera.position.z) * (1 - Math.exp(-3 * dt));
 
     desiredLook.current.set(
-      smoothed.current.x * (0.12 + focus * 0.12),
+      smoothed.current.x * (0.15 + focus * 0.12),
       0,
-      smoothed.current.z * (0.12 + focus * 0.12),
+      smoothed.current.z * (0.15 + focus * 0.12),
     );
     lookTarget.current.lerp(desiredLook.current, 1 - Math.exp(-2.4 * dt));
     camera.lookAt(lookTarget.current);
@@ -117,34 +118,51 @@ function SceneContent({ scrollProxyRef }: { scrollProxyRef: React.RefObject<HTML
 
   return (
     <>
-      {/* Environnement HDRI hébergé localement (plus aucune dépendance CDN) */}
-      <Environment files="/hdri/empty_warehouse_01_1k.hdr" environmentIntensity={0.55} />
-      <ambientLight intensity={0.18} />
+      {/* Gelapkan lingkungan HDRI agar kontras dengan api plasma */}
+      <Environment files="/hdri/empty_warehouse_01_1k.hdr" environmentIntensity={0.25} />
+      
+      {/* Ambient redup untuk suasana dark mode */}
+      <ambientLight intensity={0.08} />
+      
+      {/* Key light dengan warna agak kebiruan khas lampu bengkel industri */}
       <spotLight
-        position={[5, 10, 5]}
-        angle={Math.PI / 5}
-        penumbra={0.5}
-        intensity={5}
+        position={[6, 12, 6]}
+        angle={Math.PI / 6}
+        penumbra={0.8}
+        intensity={3.5}
+        color="#D6E4FF"
         castShadow
         shadow-bias={-0.0001}
-        shadow-mapSize-width={1024}
-        shadow-mapSize-height={1024}
       />
 
-      <pointLight ref={lightRef} color="#FF6A00" intensity={0} distance={9} />
+      {/* PointLight plasma oranye di titik pemotongan */}
+      <pointLight ref={lightRef} color="#FF5500" intensity={0} distance={7} decay={2} />
 
       <SteelPlate>
         <FPMark progressRef={cutDistanceRef} />
         <KerfTrail cutDistanceRef={cutDistanceRef} />
       </SteelPlate>
+
       <PlasmaNozzle ref={nozzleRef}>
         <PlasmaArc cuttingRef={cuttingRef} />
       </PlasmaNozzle>
+
       <Sparks
         nozzleRef={nozzleRef}
         cuttingRef={cuttingRef}
         tangentRef={tangentRef}
       />
+
+      {/* --- EFEK KUNCI KINEMATIK: BLOOM & VIGNETTE --- */}
+      <EffectComposer>
+        <Bloom 
+          luminanceThreshold={0.45} // Hanya warna terang (api/plasma) yang berpijar
+          luminanceSmoothing={0.8}
+          intensity={1.8}          // Kekuatan pijar api
+          mipmapBlur
+        />
+        <Vignette offset={0.2} darkness={0.8} /> {/* Membingkai pinggiran layar jadi gelap */}
+      </EffectComposer>
     </>
   );
 }
@@ -152,7 +170,6 @@ function SceneContent({ scrollProxyRef }: { scrollProxyRef: React.RefObject<HTML
 export default function HeroScene({ scrollProxyRef }: { scrollProxyRef: React.RefObject<HTMLDivElement | null> }) {
   const [isInView, setIsInView] = useState(true);
 
-  // Hentikan rendering WebGL saat hero selesai di-scroll (menghemat GPU/baterai 100% saat membaca section lain)
   useEffect(() => {
     if (!scrollProxyRef.current) return;
     const trigger = ScrollTrigger.create({
@@ -170,14 +187,14 @@ export default function HeroScene({ scrollProxyRef }: { scrollProxyRef: React.Re
 
   return (
     <div 
-      className="fixed inset-0 z-0 pointer-events-none bg-[#0B0B0A]"
+      className="fixed inset-0 z-0 pointer-events-none bg-[#070707]"
       style={{ visibility: isInView ? "visible" : "hidden" }}
     >
       <Canvas
         frameloop={isInView ? "always" : "never"}
         dpr={[1, 1.5]}
         shadows
-        camera={{ position: [3.35, 3.85, 4.35], fov: 35 }}
+        camera={{ position: [3.1, 2.8, 3.8], fov: 38 }}
         gl={{
           antialias: true,
           toneMapping: THREE.ACESFilmicToneMapping,

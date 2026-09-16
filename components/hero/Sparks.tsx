@@ -1,4 +1,5 @@
 "use client";
+
 import { useRef, useMemo, useEffect } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
@@ -10,43 +11,30 @@ interface SparksProps {
   tangentRef: React.RefObject<THREE.Vector2>;
 }
 
-function createSparkTexture(): THREE.CanvasTexture | undefined {
-  if (typeof document === "undefined") return undefined;
-  const canvas = document.createElement("canvas");
-  canvas.width = 32;
-  canvas.height = 32;
-  const ctx = canvas.getContext("2d");
-  if (!ctx) return undefined;
-  const gradient = ctx.createRadialGradient(16, 16, 0, 16, 16, 16);
-  gradient.addColorStop(0, "rgba(255,255,255,1)");
-  gradient.addColorStop(0.2, "rgba(255,150,0,1)");
-  gradient.addColorStop(1, "rgba(0,0,0,0)");
-  ctx.fillStyle = gradient;
-  ctx.fillRect(0, 0, 32, 32);
-  const texture = new THREE.CanvasTexture(canvas);
-  texture.generateMipmaps = false;
-  texture.minFilter = THREE.LinearFilter;
-  return texture;
-}
-
 export function Sparks({ nozzleRef, cuttingRef, tangentRef }: SparksProps) {
-  const pointsRef = useRef<THREE.Points>(null);
-  const materialRef = useRef<THREE.PointsMaterial>(null);
+  const linesRef = useRef<THREE.LineSegments>(null);
+  const materialRef = useRef<THREE.LineBasicMaterial>(null);
   const velocitiesRef = useRef<THREE.Vector3[]>([]);
 
   const particleCount = useMemo(() => {
     if (typeof window !== "undefined" && window.innerWidth < 768) {
-      return 110;
+      return 150;
     }
-    return 240;
+    return 320;
   }, []);
 
+  // Tiap percikan memiliki 2 titik (Head & Tail) -> 6 float per particle
   const positions = useMemo(() => {
-    const pos = new Float32Array(particleCount * 3);
+    const pos = new Float32Array(particleCount * 6);
     for (let i = 0; i < particleCount; i++) {
-      pos[i * 3] = 0;
-      pos[i * 3 + 1] = PLATE_SURFACE_Y;
-      pos[i * 3 + 2] = 0;
+      // Head
+      pos[i * 6] = 0;
+      pos[i * 6 + 1] = PLATE_SURFACE_Y;
+      pos[i * 6 + 2] = 0;
+      // Tail
+      pos[i * 6 + 3] = 0;
+      pos[i * 6 + 4] = PLATE_SURFACE_Y;
+      pos[i * 6 + 5] = 0;
     }
     return pos;
   }, [particleCount]);
@@ -59,59 +47,69 @@ export function Sparks({ nozzleRef, cuttingRef, tangentRef }: SparksProps) {
     velocitiesRef.current = vel;
   }, [particleCount]);
 
-  const sparkTexture = useMemo(() => createSparkTexture(), []);
-
-  useEffect(() => {
-    return () => {
-      sparkTexture?.dispose();
-    };
-  }, [sparkTexture]);
-
   useFrame((_, delta) => {
-    if (!nozzleRef.current || !pointsRef.current || !materialRef.current || velocitiesRef.current.length < particleCount) return;
+    if (!nozzleRef.current || !linesRef.current || !materialRef.current || velocitiesRef.current.length < particleCount) return;
     const dt = Math.min(delta, 0.05);
     const cutting = cuttingRef.current;
-    const targetOpacity = cutting ? 1 : 0;
-    materialRef.current.opacity += (targetOpacity - materialRef.current.opacity) * (1 - Math.exp(-12 * dt));
+    const targetOpacity = cutting ? 0.95 : 0;
+    materialRef.current.opacity += (targetOpacity - materialRef.current.opacity) * (1 - Math.exp(-14 * dt));
 
     if (materialRef.current.opacity <= 0.01) {
-      if (pointsRef.current.visible) pointsRef.current.visible = false;
+      if (linesRef.current.visible) linesRef.current.visible = false;
       return;
     }
-    if (!pointsRef.current.visible) pointsRef.current.visible = true;
+    if (!linesRef.current.visible) linesRef.current.visible = true;
 
-    const posAttr = pointsRef.current.geometry.attributes.position as THREE.BufferAttribute;
+    const posAttr = linesRef.current.geometry.attributes.position as THREE.BufferAttribute;
     const pos = posAttr.array as Float32Array;
     const originX = nozzleRef.current.position.x;
-    const originY = PLATE_SURFACE_Y + 0.02;
+    const originY = PLATE_SURFACE_Y + 0.015;
     const originZ = nozzleRef.current.position.z;
     const tx = tangentRef.current.x;
     const tz = tangentRef.current.y;
     const velocities = velocitiesRef.current;
 
     for (let i = 0; i < particleCount; i++) {
-      pos[i * 3] += velocities[i].x;
-      pos[i * 3 + 1] += velocities[i].y;
-      pos[i * 3 + 2] += velocities[i].z;
-      velocities[i].y -= 0.012;
+      const idxHead = i * 6;
+      const idxTail = i * 6 + 3;
 
-      const dx = pos[i * 3] - originX;
-      const dy = pos[i * 3 + 1] - originY;
-      const dz = pos[i * 3 + 2] - originZ;
+      // Perbarui posisi Ujung (Head)
+      pos[idxHead] += velocities[i].x;
+      pos[idxHead + 1] += velocities[i].y;
+      pos[idxHead + 2] += velocities[i].z;
+
+      // Ekor (Tail) ditarik ke belakang berdasarkan kecepatan (efek motion blur)
+      const stretch = 0.08;
+      pos[idxTail] = pos[idxHead] - velocities[i].x * stretch;
+      pos[idxTail + 1] = pos[idxHead + 1] - velocities[i].y * stretch;
+      pos[idxTail + 2] = pos[idxHead + 2] - velocities[i].z * stretch;
+
+      // Gravitasi tarik api ke bawah
+      velocities[i].y -= 0.018;
+
+      const dx = pos[idxHead] - originX;
+      const dy = pos[idxHead + 1] - originY;
+      const dz = pos[idxHead + 2] - originZ;
       const dist = Math.hypot(dx, dy, dz);
 
-      if (dist > 1.1 + Math.random() * 1.4 || pos[i * 3 + 1] < PLATE_SURFACE_Y - 0.05) {
-        pos[i * 3] = originX + (Math.random() - 0.5) * 0.04;
-        pos[i * 3 + 1] = originY;
-        pos[i * 3 + 2] = originZ + (Math.random() - 0.5) * 0.04;
+      // Respawn percikan api baru di titik pemotongan
+      if (dist > 1.3 + Math.random() * 1.2 || pos[idxHead + 1] < PLATE_SURFACE_Y - 0.06) {
+        pos[idxHead] = originX + (Math.random() - 0.5) * 0.02;
+        pos[idxHead + 1] = originY;
+        pos[idxHead + 2] = originZ + (Math.random() - 0.5) * 0.02;
 
-        const side = (Math.random() - 0.5) * 0.9;
-        const back = 0.08 + Math.random() * 0.16;
-        const up = 0.02 + Math.random() * 0.08;
+        pos[idxTail] = pos[idxHead];
+        pos[idxTail + 1] = pos[idxHead + 1];
+        pos[idxTail + 2] = pos[idxHead + 2];
+
+        const side = (Math.random() - 0.5) * 1.2;
+        const back = 0.12 + Math.random() * 0.22;
+        const up = 0.04 + Math.random() * 0.12;
+
         velocities[i].set(
-          -tx * back + -tz * side * 0.35,
+          -tx * back + -tz * side * 0.45,
           up,
-          -tz * back + tx * side * 0.35,
+          -tz * back + tx * side * 0.45
         );
       }
     }
@@ -119,19 +117,18 @@ export function Sparks({ nozzleRef, cuttingRef, tangentRef }: SparksProps) {
   });
 
   return (
-    <points ref={pointsRef}>
+    <lineSegments ref={linesRef} frustumCulled={false}>
       <bufferGeometry>
         <bufferAttribute attach="attributes-position" args={[positions, 3]} />
       </bufferGeometry>
-      <pointsMaterial
+      <lineBasicMaterial
         ref={materialRef}
-        map={sparkTexture}
-        size={0.22}
+        color="#FF5500"
         transparent
-        blending={THREE.AdditiveBlending}
-        depthWrite={false}
         opacity={0}
+        linewidth={2}
+        toneMapped={false} // Agar menyala silau saat mengenai efek Bloom
       />
-    </points>
+    </lineSegments>
   );
 }

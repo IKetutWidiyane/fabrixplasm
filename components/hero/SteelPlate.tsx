@@ -1,9 +1,9 @@
 "use client";
+
 import { forwardRef, ReactNode } from "react";
 import * as THREE from "three";
 import { useTexture } from "@react-three/drei";
 
-// 1. Tambahkan tipe props agar TypeScript mengizinkan 'children'
 interface SteelPlateProps {
   children?: ReactNode;
 }
@@ -19,16 +19,17 @@ export const SteelPlate = forwardRef<THREE.Group, SteelPlateProps>(
 
     return (
       <group ref={ref} position={[0, -0.4, 0]}>
-        <mesh receiveShadow>
-          {/* Ketebalan box adalah 0.4 (Y). Artinya permukaannya ada di Y = 0.2 */}
+        <mesh receiveShadow castShadow>
           <boxGeometry args={[20, 0.4, 15]} />
           <meshStandardMaterial 
-            {...textureProps} 
-            envMapIntensity={1.5} 
+            {...textureProps}
+            color="#1b1c20"         // Tone baja industri gelap
+            metalness={1.0}         // Karakter murni logam
+            roughness={0.35}        // Permukaan kusam berbobot
+            envMapIntensity={2.5}   // Mempertegas pantulan lingkungan
           />
         </mesh>
 
-        {/* 2. Letakkan ukiran FP (children) di sini agar ikut bergerak */}
         {children}
       </group>
     );

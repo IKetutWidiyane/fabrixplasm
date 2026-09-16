@@ -12,17 +12,19 @@ type KerfTrailProps = {
 export function KerfTrail({ cutDistanceRef }: KerfTrailProps) {
   const lineRef = useRef<THREE.LineSegments>(null);
   const segments = useMemo(() => getKerfSegments(), []);
+  
   const { positions, prefixLengths, totalLength } = useMemo(() => {
     const pos = new Float32Array(segments.length * 6);
     const prefix: number[] = [];
     let acc = 0;
     for (let i = 0; i < segments.length; i++) {
       const s = segments[i];
+      // Naikkan posisi Y sedikit (+0.002) agar tidak z-fighting dengan lantai
       pos[i * 6] = s.start.x;
-      pos[i * 6 + 1] = s.start.y;
+      pos[i * 6 + 1] = s.start.y + 0.002;
       pos[i * 6 + 2] = s.start.z;
       pos[i * 6 + 3] = s.end.x;
-      pos[i * 6 + 4] = s.end.y;
+      pos[i * 6 + 4] = s.end.y + 0.002;
       pos[i * 6 + 5] = s.end.z;
       acc += s.length;
       prefix.push(acc);
@@ -50,7 +52,12 @@ export function KerfTrail({ cutDistanceRef }: KerfTrailProps) {
       <bufferGeometry>
         <bufferAttribute attach="attributes-position" args={[positions, 3]} />
       </bufferGeometry>
-      <lineBasicMaterial color="#FF6A00" toneMapped={false} />
+      {/* Warna super terang + toneMapped={false} agar garis membara menyala terang di Bloom */}
+      <lineBasicMaterial 
+        color="#FF3300" 
+        linewidth={3}
+        toneMapped={false} 
+      />
     </lineSegments>
   );
 }
