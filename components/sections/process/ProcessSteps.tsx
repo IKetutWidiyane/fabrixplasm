@@ -22,7 +22,7 @@ export default function ProcessSteps({ activeStep }: { activeStep: number }) {
             <span className="font-mono text-zinc-500 text-xs tracking-widest mb-4 block">
               {step.id} — {step.phase}
             </span>
-            <h3 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter text-white mb-6">
+            <h3 className="text-[clamp(2.5rem,5vw,3.75rem)] font-bold tracking-tighter text-white mb-6">
               {step.title}
             </h3>
             <p className="text-zinc-400 text-lg md:text-xl max-w-sm leading-relaxed">

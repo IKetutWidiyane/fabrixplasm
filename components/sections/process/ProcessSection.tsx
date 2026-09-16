@@ -68,8 +68,8 @@ export default function ProcessSection() {
         <div className="sticky top-0 h-screen w-full flex items-center overflow-hidden">
           <div className="container mx-auto px-6 grid grid-cols-12 gap-12 items-center">
             
-            {/* Bagian Kiri: Typografi & Logic */}
-            <div className="col-span-4 lg:col-span-5 flex flex-col justify-center pr-8">
+            {/* Bagian Kiri: Typografi & Logic (z-20 agar tidak pernah tertutup gambar visualizer) */}
+            <div className="col-span-5 flex flex-col justify-center pr-8 relative z-20">
               <ProcessProgress activeStep={activeStep} />
               <ProcessSteps activeStep={activeStep} />
               
@@ -83,8 +83,8 @@ export default function ProcessSection() {
               </div>
             </div>
 
-            {/* Bagian Kanan: Visualizer */}
-            <div className="col-span-8 lg:col-span-7">
+            {/* Bagian Kanan: Visualizer (diisolasi di kolomnya sendiri) */}
+            <div className="col-span-7 relative z-10">
               <ProcessVisual />
             </div>
             
@@ -114,7 +114,7 @@ export default function ProcessSection() {
                 alt={step.title}
                 loading="lazy"
                 decoding="async"
-                className="w-full h-full object-cover grayscale mix-blend-lighten"
+                className="w-full h-full object-cover brightness-90"
               />
             </div>
             <div>

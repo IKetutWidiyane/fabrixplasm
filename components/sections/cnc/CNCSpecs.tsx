@@ -26,6 +26,8 @@ export default function CNCSpecs() {
         scrollTrigger: {
           trigger: containerRef.current,
           start: "top 80%",
+          // Reverse saat scroll ke atas agar mikro-interaksi membalik
+          toggleActions: "play none none reverse",
         },
       }
     );

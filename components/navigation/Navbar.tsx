@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { COMPANY_DATA } from "@/data/company";
+import { lenisStore } from "@/lib/lenis";
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -36,12 +37,20 @@ export default function Navbar() {
     };
   }, []);
 
-  // Kunci scroll saat mobile menu terbuka
+  // Kunci scroll saat mobile menu terbuka.
+  // Selain overflow:hidden, Lenis juga di-stop agar swipe di layar sentuh
+  // tidak menggeser halaman di belakang menu (mis. pada HP).
   useEffect(() => {
     if (isMobileMenuOpen) {
       document.body.style.overflow = "hidden";
+      document.body.style.touchAction = "none";
+      document.body.style.overscrollBehavior = "none";
+      lenisStore.instance?.stop();
     } else {
       document.body.style.overflow = "";
+      document.body.style.touchAction = "";
+      document.body.style.overscrollBehavior = "";
+      lenisStore.instance?.start();
     }
   }, [isMobileMenuOpen]);
 

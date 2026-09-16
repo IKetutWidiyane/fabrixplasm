@@ -65,7 +65,7 @@ export default function CNCSection() {
           02 — CNC MACHINING
         </div>
         
-        <h2 className="text-5xl md:text-7xl font-bold tracking-tighter leading-[1.1]">
+        <h2 className="text-[clamp(2.6rem,11vw,7rem)] font-bold tracking-tighter leading-[1.1]">
           <div className="reveal-text">PRECISION</div>
           <div className="reveal-text">BUILT INTO</div>
           <div className="reveal-text">EVERY CUT.</div>

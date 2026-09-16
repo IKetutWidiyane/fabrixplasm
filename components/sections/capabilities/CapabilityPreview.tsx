@@ -73,7 +73,7 @@ export const CapabilityPreview = forwardRef<CapabilityPreviewHandle, CapabilityP
                 alt={item.name}
                 loading="eager"
                 decoding="async"
-                className="w-full h-full object-cover grayscale brightness-90 contrast-110"
+                className="w-full h-full object-cover brightness-95 contrast-105"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
               <div className="absolute bottom-2 left-3 right-3 flex justify-between items-center font-mono text-[9px] text-zinc-300 tracking-wider uppercase">

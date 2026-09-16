@@ -4,6 +4,7 @@ import Lenis from "lenis";
 import gsap from "gsap";
 import ScrollTrigger from "gsap/ScrollTrigger";
 import { PRELOADER_READY_EVENT } from "@/components/loader/events";
+import { lenisStore } from "@/lib/lenis";
 
 export function useLenis() {
   useEffect(() => {
@@ -12,7 +13,15 @@ export function useLenis() {
       duration: 1.5,
       easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       smoothWheel: true,
+      // Aktifkan sinkronisasi sentuh agar swipe di HP tetap terasa natural
+      // dan posisi scroll Lenis ikut ter-update sehingga ScrollTrigger
+      // (mikro-interaksi) merespons gerakan ke atas / bawah.
+      syncTouch: true,
+      touchMultiplier: 1,
     });
+
+    // Bagikan instance ke Navbar (untuk kunci scroll saat menu mobile terbuka)
+    lenisStore.instance = lenis;
 
     const onScroll = () => ScrollTrigger.update();
     const onTicker = (time: number) => {
@@ -34,6 +43,7 @@ export function useLenis() {
     return () => {
       gsap.ticker.remove(onTicker);
       lenis.destroy();
+      lenisStore.instance = null;
       window.removeEventListener(PRELOADER_READY_EVENT, onPreloaderReady);
     };
   }, []);

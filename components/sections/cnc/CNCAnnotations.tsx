@@ -17,15 +17,15 @@ export default function CNCAnnotations() {
 
   return (
     <div ref={annotationRef} className="absolute inset-0 z-20 pointer-events-none">
-      {/* Hotspot 1 - Tool Head */}
-      <div className="absolute top-[40%] left-[60%] group pointer-events-auto">
+      {/* Hotspot 1 - Tool Head (tap/click pada HP, hover pada desktop) */}
+      <div className="absolute top-[40%] left-[60%] group pointer-events-auto" tabIndex={0}>
         {/* Titik / Node */}
-        <div className="w-3 h-3 bg-white rounded-full relative cursor-crosshair">
+        <div className="w-3 h-3 bg-white rounded-full relative cursor-pointer focus:outline-none">
           <div className="absolute inset-0 bg-white rounded-full animate-ping opacity-75"></div>
         </div>
         
-        {/* Garis & Text Annotation */}
-        <div className="absolute top-4 left-4 opacity-0 group-hover:opacity-100 transition-all duration-300">
+        {/* Garis & Text Annotation (hover desktop + focus tap mobile) */}
+        <div className="absolute top-4 left-4 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-all duration-300">
           <div className="flex flex-col items-start">
             <div className="w-px h-8 bg-zinc-400 mb-1 ml-2"></div>
             <div className="bg-[#0a0a0a]/90 backdrop-blur-md border border-zinc-700 p-3 text-xs w-48">

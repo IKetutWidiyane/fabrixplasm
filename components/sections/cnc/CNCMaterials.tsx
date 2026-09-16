@@ -35,6 +35,8 @@ export default function CNCMaterials() {
         scrollTrigger: {
           trigger: containerRef.current,
           start: "top 85%",
+          // Reverse saat scroll ke atas agar mikro-interaksi membalik
+          toggleActions: "play none none reverse",
         },
       }
     );

@@ -40,7 +40,7 @@ export default function CapabilitiesSection() {
         <div className="text-zinc-500 font-mono text-sm tracking-widest mb-6">
           04 — CAPABILITIES
         </div>
-        <h2 className="text-4xl sm:text-6xl md:text-7xl font-bold tracking-tighter leading-[1.05]">
+        <h2 className="text-[clamp(2.4rem,10vw,7rem)] font-bold tracking-tighter leading-[1.05]">
           WHAT WE BUILD.
           <span className="block text-zinc-500">DIGITAL TO PHYSICAL.</span>
         </h2>

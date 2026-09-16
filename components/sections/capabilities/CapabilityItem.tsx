@@ -111,7 +111,7 @@ export function CapabilityItem({
                 alt={item.name}
                 loading="eager"
                 decoding="async"
-                className="w-full h-full object-cover grayscale contrast-110"
+                className="w-full h-full object-cover contrast-110"
               />
             </div>
 

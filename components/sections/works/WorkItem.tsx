@@ -55,7 +55,7 @@ export function WorkItem({ project }: WorkItemProps) {
           alt={project.title}
           loading="lazy"
           decoding="async"
-          className="absolute -top-[14%] left-0 w-full h-[128%] object-cover grayscale brightness-90 group-hover:brightness-105 group-hover:grayscale-0 transition-all duration-700 ease-out"
+          className="absolute -top-[14%] left-0 w-full h-[128%] object-cover grayscale brightness-90 max-lg:grayscale-0 group-hover:brightness-105 group-hover:grayscale-0 transition-all duration-700 ease-out"
         />
 
         {/* Industrial CAD overlay grid */}

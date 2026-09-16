@@ -28,7 +28,7 @@ export default function ProcessVisual() {
               loading="lazy"
               decoding="async"
               // PERBAIKAN 3: Hapus opacity-80 & mix-blend-lighten yang membuat gambar tembus pandang
-              className="w-full h-full object-cover grayscale brightness-75"
+              className="w-full h-full object-cover brightness-90"
             />
           </div>
         </div>
