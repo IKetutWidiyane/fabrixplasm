@@ -1,6 +1,8 @@
 "use client";
 
 import { processData } from "@/data/processData";
+import { worksData } from "@/data/worksData";
+import { capabilitiesData } from "@/data/capabilitiesData";
 
 export const CRITICAL_ASSETS: readonly string[] = [
   "/models/hero/nozzle.glb",
@@ -14,6 +16,11 @@ export const CRITICAL_ASSETS: readonly string[] = [
 export const IDLE_ASSETS: readonly string[] = [
   "/images/cnc/cnc-machine.webp",
   ...processData.map((step) => step.image),
+  // Selected Works — uniform 4:3 photos
+  ...worksData.map((item) => item.image),
+  // Capabilities — small WebP thumbnails so the hover preview & mobile
+  // accordion render instantly (already in browser cache before interaction)
+  ...capabilitiesData.map((item) => item.imagePreview),
 ];
 
 const FONT_WEIGHT = 0.1;

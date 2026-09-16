@@ -69,9 +69,9 @@ export const CapabilityPreview = forwardRef<CapabilityPreviewHandle, CapabilityP
               className="preview-layer absolute inset-0 w-full h-full opacity-0 transition-opacity duration-300"
             >
               <img
-                src={item.image}
+                src={item.imagePreview}
                 alt={item.name}
-                loading="lazy"
+                loading="eager"
                 decoding="async"
                 className="w-full h-full object-cover grayscale brightness-90 contrast-110"
               />

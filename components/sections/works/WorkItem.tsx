@@ -13,11 +13,17 @@ export function WorkItem({ project }: WorkItemProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const clipRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
+  const infoRef = useRef<HTMLDivElement>(null);
 
   useGSAP(
     () => {
       if (containerRef.current && imageRef.current && clipRef.current) {
-        setupWorkItemParallax(containerRef.current, imageRef.current, clipRef.current);
+        setupWorkItemParallax(
+          containerRef.current,
+          imageRef.current,
+          clipRef.current,
+          infoRef.current
+        );
       }
     },
     { scope: containerRef }
@@ -49,7 +55,7 @@ export function WorkItem({ project }: WorkItemProps) {
           alt={project.title}
           loading="lazy"
           decoding="async"
-          className="absolute -top-[10%] left-0 w-full h-[120%] object-cover grayscale brightness-90 group-hover:brightness-105 group-hover:grayscale-0 transition-all duration-700 ease-out"
+          className="absolute -top-[14%] left-0 w-full h-[128%] object-cover grayscale brightness-90 group-hover:brightness-105 group-hover:grayscale-0 transition-all duration-700 ease-out"
         />
 
         {/* Industrial CAD overlay grid */}
@@ -67,7 +73,10 @@ export function WorkItem({ project }: WorkItemProps) {
       </div>
 
       {/* PROJECT DETAILS & SPECIFICATIONS */}
-      <div className="mt-6 flex flex-col md:flex-row justify-between items-start gap-6">
+      <div
+        ref={infoRef}
+        className="mt-6 flex flex-col md:flex-row justify-between items-start gap-6"
+      >
         <div className="max-w-md">
           <h3 className="text-2xl sm:text-3xl font-bold tracking-tight text-white group-hover:text-[#FF6A00] transition-colors">
             {project.title}

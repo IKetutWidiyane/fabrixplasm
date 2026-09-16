@@ -107,9 +107,9 @@ export function CapabilityItem({
             {/* Inline image for touch devices */}
             <div className="w-full aspect-[16/10] bg-zinc-900 overflow-hidden border border-zinc-800 rounded-sm">
               <img
-                src={item.image}
+                src={item.imagePreview}
                 alt={item.name}
-                loading="lazy"
+                loading="eager"
                 decoding="async"
                 className="w-full h-full object-cover grayscale contrast-110"
               />

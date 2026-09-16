@@ -9,9 +9,14 @@ export interface CapabilityItemData {
     value: string;
   }[];
   image: string;
+  imagePreview: string; // Optimized small thumbnail for hover preview + mobile accordion (fast)
   tags: string[];
 }
 
+// NOTE — IMAGE SOURCES:
+// Remote Unsplash: `fm=webp&q=..` serves a lightweight WebP directly from the CDN.
+// Local option: run `npm run images:download`, then point `image` /
+// `imagePreview` to static paths, e.g. "/images/capabilities/cnc-machining.webp".
 export const capabilitiesData: CapabilityItemData[] = [
   {
     id: "01",
@@ -26,7 +31,8 @@ export const capabilitiesData: CapabilityItemData[] = [
       { label: "MAX ENVELOPE", value: "1200 × 800 × 500 MM" },
       { label: "MATERIALS", value: "ALUMINUM, TITANIUM, STEEL, BRASS, PEEK" },
     ],
-    image: "https://images.unsplash.com/photo-1565439390234-58cb30cce4b4?q=75&w=1200&auto=format&fit=crop",
+    image: "https://images.unsplash.com/photo-1565439390234-58cb30cce4b4?fm=webp&q=70&w=1200&auto=format&fit=crop",
+    imagePreview: "https://images.unsplash.com/photo-1565439390234-58cb30cce4b4?fm=webp&q=60&w=640&auto=format&fit=crop",
     tags: ["5-AXIS", "MILLING", "TURNING", "AEROSPACE"],
   },
   {
@@ -42,7 +48,8 @@ export const capabilitiesData: CapabilityItemData[] = [
       { label: "POSITION ACCURACY", value: "±0.03 MM" },
       { label: "GAS ASSIST", value: "HIGH-PRESSURE N2 / O2" },
     ],
-    image: "https://images.unsplash.com/photo-1504917599217-d4dc5ebe6122?q=75&w=1200&auto=format&fit=crop",
+    image: "https://images.unsplash.com/photo-1504917599217-d4dc5ebe6122?fm=webp&q=70&w=1200&auto=format&fit=crop",
+    imagePreview: "https://images.unsplash.com/photo-1504917599217-d4dc5ebe6122?fm=webp&q=60&w=640&auto=format&fit=crop",
     tags: ["FIBER LASER", "SHEET METAL", "NITROGEN", "BURR-FREE"],
   },
   {
@@ -58,7 +65,8 @@ export const capabilitiesData: CapabilityItemData[] = [
       { label: "BEVELING", value: "±45° MULTI-AXIS BEVEL HEAD" },
       { label: "BED CAPACITY", value: "3000 × 6000 MM" },
     ],
-    image: "https://images.unsplash.com/photo-1505098935706-93da5394beee?q=75&w=1200&auto=format&fit=crop",
+    image: "https://images.unsplash.com/photo-1505098935706-93da5394beee?fm=webp&q=70&w=1200&auto=format&fit=crop",
+    imagePreview: "https://images.unsplash.com/photo-1505098935706-93da5394beee?fm=webp&q=60&w=640&auto=format&fit=crop",
     tags: ["HEAVY STEEL", "400A ARC", "BEVEL CUT", "STRUCTURAL"],
   },
   {
@@ -74,7 +82,8 @@ export const capabilitiesData: CapabilityItemData[] = [
       { label: "POLYMERS", value: "PA12 CARBON, RESIN, TPU, ESD-SAFE" },
       { label: "OPTIMIZATION", value: "LATTICE & TOPOLOGY GENERATION" },
     ],
-    image: "https://images.unsplash.com/photo-1581092160562-40aa08e78837?q=75&w=1200&auto=format&fit=crop",
+    image: "https://images.unsplash.com/photo-1581092160562-40aa08e78837?fm=webp&q=70&w=1200&auto=format&fit=crop",
+    imagePreview: "https://images.unsplash.com/photo-1581092160562-40aa08e78837?fm=webp&q=60&w=640&auto=format&fit=crop",
     tags: ["SLS / SLA", "PA12 NYLON", "TOPOLOGY OPTIMIZATION"],
   },
   {
@@ -90,7 +99,8 @@ export const capabilitiesData: CapabilityItemData[] = [
       { label: "FINISHING", value: "BEAD BLAST, ANODIZE, HEAT TREAT" },
       { label: "INTEGRATION", value: "HARDWARE & FASTENER INSERTION" },
     ],
-    image: "https://images.unsplash.com/photo-1581092335397-9583fe92d232?q=75&w=1200&auto=format&fit=crop",
+    image: "https://images.unsplash.com/photo-1581092335397-9583fe92d232?fm=webp&q=70&w=1200&auto=format&fit=crop",
+    imagePreview: "https://images.unsplash.com/photo-1581092335397-9583fe92d232?fm=webp&q=60&w=640&auto=format&fit=crop",
     tags: ["EXPRESS 48H", "CMM INSPECTED", "FUNCTIONAL ASSEMBLY"],
   },
 ];

@@ -11,13 +11,18 @@ export interface WorkProject {
   image: string;
   clientSector: string;
   layout: {
-    columnSpan: string; // e.g. "col-span-12 lg:col-span-7"
+    columnSpan: string; // e.g. "col-span-12 lg:col-span-6"
     align: "left" | "right" | "center";
     aspectRatio: string; // e.g. "aspect-[16/10]"
     offsetY?: string; // negative margin for asymmetric overlap
   };
 }
 
+// NOTE — IMAGE SOURCES:
+// Default: remote Unsplash URLs use `fm=webp&q=70` so the browser receives a
+// lightweight WebP directly from the CDN.
+// Local (self-hosted) option: run `npm run images:download`, then replace the
+// `image` value with a static path, e.g. "/images/works/work-01.webp".
 export const worksData: WorkProject[] = [
   {
     id: "work-01",
@@ -30,12 +35,14 @@ export const worksData: WorkProject[] = [
     year: "2026",
     description:
       "Milled from a solid 45kg billet down to a 1.8kg topology-optimized aerospace mount. Stress-relieved with zero vibration chatter across deep pockets.",
-    image: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?q=75&w=1400&auto=format&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1581092160607-ee22621dd758?fm=webp&q=70&w=1400&auto=format&fit=crop",
     clientSector: "DEFENSE & AVIONICS",
     layout: {
-      columnSpan: "lg:col-span-7",
+      columnSpan: "lg:col-span-6",
       align: "left",
-      aspectRatio: "aspect-[16/11]",
+      aspectRatio: "aspect-[4/3]",
+      offsetY: "",
     },
   },
   {
@@ -49,13 +56,14 @@ export const worksData: WorkProject[] = [
     year: "2026",
     description:
       "Heavy-gauge impact armor skid plate cut with robotic multi-axis beveling. Engineered to resist cyclic torsional shock in extreme desert endurance testing.",
-    image: "https://images.unsplash.com/photo-1504917599217-d4dc5ebe6122?q=75&w=1400&auto=format&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1504917599217-d4dc5ebe6122?fm=webp&q=70&w=1400&auto=format&fit=crop",
     clientSector: "MOTORSPORT ENGINEERING",
     layout: {
-      columnSpan: "lg:col-span-6 lg:ml-auto",
+      columnSpan: "lg:col-span-6",
       align: "right",
-      aspectRatio: "aspect-[4/5]",
-      offsetY: "lg:-mt-28",
+      aspectRatio: "aspect-[4/3]",
+      offsetY: "lg:mt-24",
     },
   },
   {
@@ -69,13 +77,14 @@ export const worksData: WorkProject[] = [
     year: "2026",
     description:
       "Hermetically sealed lidar sensor housing with internal helical cooling jackets. Surface treated with Type III Class 2 hard-coat black anodizing.",
-    image: "https://images.unsplash.com/photo-1563986768609-322da13575f3?q=75&w=1400&auto=format&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1563986768609-322da13575f3?fm=webp&q=70&w=1400&auto=format&fit=crop",
     clientSector: "ROBOTICS & LIDAR",
     layout: {
-      columnSpan: "lg:col-span-7",
+      columnSpan: "lg:col-span-6",
       align: "left",
-      aspectRatio: "aspect-[16/10]",
-      offsetY: "lg:-mt-20",
+      aspectRatio: "aspect-[4/3]",
+      offsetY: "lg:mt-12",
     },
   },
   {
@@ -89,13 +98,14 @@ export const worksData: WorkProject[] = [
     year: "2026",
     description:
       "Hybrid additive-manufactured turbine shroud featuring organic internal cooling channels impossible to produce via traditional tooling, finished on 5-axis CNC.",
-    image: "https://images.unsplash.com/photo-1535813547-99c456a41d4a?q=75&w=1400&auto=format&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1535813547-99c456a41d4a?fm=webp&q=70&w=1400&auto=format&fit=crop",
     clientSector: "PROPULSION & ENERGY",
     layout: {
-      columnSpan: "lg:col-span-9 lg:mx-auto",
+      columnSpan: "lg:col-span-6",
       align: "center",
-      aspectRatio: "aspect-[16/9]",
-      offsetY: "lg:mt-12",
+      aspectRatio: "aspect-[4/3]",
+      offsetY: "lg:mt-24",
     },
   },
 ];

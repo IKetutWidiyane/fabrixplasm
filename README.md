@@ -237,6 +237,23 @@ Texture
 
 Metal 061 A — ambientCG
 
+✦ Images & Performance
+
+All section photos (Works, Capabilities, Process) are pulled from the Unsplash CDN as lightweight WebP:
+
+- Remote mode (default): every URL uses `fm=webp` so the CDN serves a true WebP.
+- `app/layout.tsx` preconnects + dns-prefetches `images.unsplash.com` to cut connection latency.
+- `lib/assetLoader.ts` warm the browser cache in the background (`requestIdleCallback`) with the Works photos and the small Capabilities thumbnails — that's why the floating hover preview and the mobile accordion render instantly.
+- Capabilities use a dedicated `imagePreview` thumbnail (`w=640`, q=60) for the hover card / mobile accordion instead of the full-size image.
+
+Self-hosted / offline option — download & convert to WebP:
+
+```bash
+npm run images:download
+```
+
+This downloads each photo listed in `scripts/image-manifest.mjs`, resizes it with sharp to a fixed destination size, and encodes it as an optimized `.webp` inside `public/images/`. After it finishes, switch the `image` / `imagePreview` values in `data/worksData.ts` and `data/capabilitiesData.ts` to the static paths (already annotated in those files).
+
 ✦ Project Structure
 fabrixplasm/
 │

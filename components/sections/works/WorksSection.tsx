@@ -27,8 +27,8 @@ export default function WorksSection() {
         </p>
       </div>
 
-      {/* ASYMMETRIC EDITORIAL WORK GRID */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-x-8 gap-y-24 lg:gap-y-36 items-start">
+      {/* STAGGERED EDITORIAL WORK GRID — uniform 4:3 photos, responsive 1/2 col */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-x-8 lg:gap-x-12 gap-y-20 lg:gap-y-32 items-start">
         {worksData.map((project) => (
           <WorkItem key={project.id} project={project} />
         ))}
